@@ -1,0 +1,75 @@
+{
+  "app": {
+    "signingConfigs": [],
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "compatibleSdkVersion": "5.0.0(12)",
+        "runtimeOS": "HarmonyOS",
+        "targetSdkVersion": "6.0.0(20)"
+      }
+    ],
+    "buildModeSet": [
+      {
+        "name": "debug"
+      },
+      {
+        "name": "profile"
+      },
+      {
+        "name": "release"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "audio_session",
+      "srcPath": "C:/Users/Administrator/AppData/Local/Pub/Cache/git/flutter_audio_session-d2ff09dfe4df3b366c19cca27562bdb413de20c7/ohos",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "audioplayers_ohos",
+      "srcPath": "C:/Users/Administrator/AppData/Local/Pub/Cache/git/flutter_audioplayers-5b1f0f972b200b543b5ac27c46f8efba63662e12/packages/audioplayers_ohos/ohos",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "audio_service_ohos",
+      "srcPath": "C:/Users/Administrator/AppData/Local/Pub/Cache/git/fluttertpc_audio_service-43be9f21aa33cde5a7855691a00ce52aa06014a7/audio_service_ohos/ohos",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    }
+  ]
+}

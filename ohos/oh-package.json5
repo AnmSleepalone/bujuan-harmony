@@ -1,0 +1,22 @@
+{
+  "modelVersion": "5.0.0",
+  "name": "bujuan_music",
+  "version": "1.0.0",
+  "description": "Please describe the basic information.",
+  "main": "",
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "@ohos/flutter_ohos": "file:./har/flutter.har"
+  },
+  "devDependencies": {
+    "@ohos/hypium": "1.0.6"
+  },
+  "overrides": {
+    "@ohos/flutter_ohos": "file:./har/flutter.har",
+    "audio_session": "C:/Users/Administrator/AppData/Local/Pub/Cache/git/flutter_audio_session-d2ff09dfe4df3b366c19cca27562bdb413de20c7/ohos",
+    "audioplayers_ohos": "C:/Users/Administrator/AppData/Local/Pub/Cache/git/flutter_audioplayers-5b1f0f972b200b543b5ac27c46f8efba63662e12/packages/audioplayers_ohos/ohos",
+    "audio_service_ohos": "C:/Users/Administrator/AppData/Local/Pub/Cache/git/fluttertpc_audio_service-43be9f21aa33cde5a7855691a00ce52aa06014a7/audio_service_ohos/ohos",
+    "@ohos/flutter_module": "file:./entry"
+  }
+}
