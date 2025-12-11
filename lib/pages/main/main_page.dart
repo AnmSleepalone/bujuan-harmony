@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:hugeicons/hugeicons.dart';
 import '../../utils/adaptive_screen_utils.dart';
 
 
@@ -110,7 +110,7 @@ class DesktopView extends StatelessWidget {
             IconButton(
                 onPressed: () => BujuanMusicHandler().skipToPrevious(),
                 icon: Icon(
-                  HugeIconsSolid.previous,
+                  HugeIcons.strokeRoundedPrevious,
                   size: 22.sp,
                 )),
             SizedBox(width: 10.w),
@@ -119,7 +119,7 @@ class DesktopView extends StatelessWidget {
               return IconButton(
                   onPressed: () => BujuanMusicHandler().playOrPause(),
                   icon: Icon(
-                    (playbackState?.playing ?? false) ? HugeIconsSolid.pause : HugeIconsSolid.play,
+                    (playbackState?.playing ?? false) ? HugeIcons.strokeRoundedPause : HugeIcons.strokeRoundedPlay,
                     size: 22.sp,
                   ));
             }),
@@ -127,7 +127,7 @@ class DesktopView extends StatelessWidget {
             IconButton(
                 onPressed: () => BujuanMusicHandler().skipToNext(),
                 icon: Icon(
-                  HugeIconsSolid.next,
+                  HugeIcons.strokeRoundedNext,
                   size: 22.sp,
                 )),
             SizedBox(width: 15.w),
@@ -154,13 +154,13 @@ class DesktopView extends StatelessWidget {
                       style: TextStyle(fontSize: 14.sp),
                     ),
                     SizedBox(width: 15.w),
-                    IconButton(onPressed: () {}, icon: Icon(HugeIconsSolid.favourite)),
+                    IconButton(onPressed: () {}, icon: Icon(HugeIcons.strokeRoundedFavourite)),
                   ],
                 );
               }),
             ),
             SizedBox(width: 10.w),
-            IconButton(onPressed: () {}, icon: Icon(HugeIconsSolid.volumeHigh))
+            IconButton(onPressed: () {}, icon: Icon(HugeIcons.strokeRoundedVolumeHigh))
           ],
         ),
       ),
@@ -186,7 +186,7 @@ class DesktopView extends StatelessWidget {
           height: 46.w,
           width: 460.w,
           child: Row(
-            children: [Icon(HugeIconsSolid.search02), SizedBox(width: 15.w), Text('Search Any...')],
+            children: [Icon(HugeIcons.strokeRoundedSearch02), SizedBox(width: 15.w), Text('Search Any...')],
           ),
         )
       ],

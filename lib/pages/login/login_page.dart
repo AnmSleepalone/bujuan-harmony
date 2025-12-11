@@ -4,7 +4,7 @@ import 'package:bujuan_music_api/bujuan_music_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:pinput/pinput.dart';
 
 class LoginPage extends StatefulWidget {
@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(HugeIconsSolid.qrCode),
+                Icon(HugeIcons.strokeRoundedQrCode),
                 SizedBox(width: 10.w),
                 Text(
                   'QR code login',

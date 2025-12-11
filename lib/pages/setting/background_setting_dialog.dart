@@ -8,7 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:hugeicons/hugeicons.dart';
 // import 'package:rive_native/rive_native.dart' as rive;
 
 class BackgroundSettingDialog extends StatefulWidget {
@@ -64,7 +64,7 @@ class _BackgroundSettingDialogState extends State<BackgroundSettingDialog> {
                                         duration: Duration(milliseconds: 300),
                                         curve: Curves.decelerate),
                                     icon: Icon(
-                                      HugeIconsSolid.arrowLeft01,
+                                      HugeIcons.strokeRoundedArrowLeft01,
                                       size: 32.sp,
                                     )),
                                 SizedBox(width: 30.w),
@@ -86,7 +86,7 @@ class _BackgroundSettingDialogState extends State<BackgroundSettingDialog> {
                                         duration: Duration(milliseconds: 300),
                                         curve: Curves.decelerate),
                                     icon: Icon(
-                                      HugeIconsSolid.arrowRight01,
+                                      HugeIcons.strokeRoundedArrowRight01,
                                       size: 32.sp,
                                     )),
                               ],

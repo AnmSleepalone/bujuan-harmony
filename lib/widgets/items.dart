@@ -4,7 +4,7 @@ import 'package:bujuan_music/widgets/cache_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../router/app_router.dart';
 
@@ -34,7 +34,7 @@ class MediaItemWidget extends StatelessWidget {
                 BujuanMusicHandler().pause();
                 context.push(AppRouter.mv, extra: mediaItem.extras?['mv']);
               },
-              icon: Icon(HugeIconsStroke.tv01, size: 20.sp))
+              icon: Icon(HugeIcons.strokeRoundedTv01, size: 20.sp))
           : null,
       onTap: () => onTap?.call(),
     );

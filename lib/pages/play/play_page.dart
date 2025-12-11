@@ -5,7 +5,7 @@ import 'package:bujuan_music/widgets/cache_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:shadex/shadex.dart';
 import '../../utils/color_utils.dart';
@@ -137,7 +137,7 @@ class PlaybackControls extends StatelessWidget {
       children: [
         SizedBox(width: 20.w),
         const ControlButton(
-          image: HugeIconsSolid.favourite,
+          image: HugeIcons.strokeRoundedFavourite,
           color: Colors.red,
         ),
         SizedBox(width: 15.w),
@@ -146,12 +146,12 @@ class PlaybackControls extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               ControlButton(
-                image: HugeIconsStroke.previous,
+                image: HugeIcons.strokeRoundedPrevious,
                 onTap: () => BujuanMusicHandler().skipToPrevious(),
               ),
               _PlayPauseButton(),
               ControlButton(
-                image: HugeIconsStroke.next,
+                image: HugeIcons.strokeRoundedNext,
                 onTap: () => BujuanMusicHandler().skipToNext(),
               ),
             ],
@@ -162,10 +162,10 @@ class PlaybackControls extends StatelessWidget {
           var loopMode = ref.watch(loopModeNotifierProvider);
           return ControlButton(
             image: loopMode == LoopMode.one
-                ? HugeIconsStroke.repeatOne02
+                ? HugeIcons.strokeRoundedRepeatOne02
                 : loopMode == LoopMode.playlist
-                    ? HugeIconsStroke.repeat
-                    : HugeIconsStroke.shuffle,
+                    ? HugeIcons.strokeRoundedRepeat
+                    : HugeIcons.strokeRoundedShuffle,
             onTap: () {
               ref.read(loopModeNotifierProvider.notifier).changeMode();
             },
@@ -196,7 +196,7 @@ class _PlayPauseButton extends ConsumerWidget {
       child: IconButton(
         onPressed: () => BujuanMusicHandler().playOrPause(),
         icon: Icon(
-          playing ? HugeIconsStroke.pause : HugeIconsStroke.play,
+          playing ? HugeIcons.strokeRoundedPause : HugeIcons.strokeRoundedPlay,
           size: 24.sp,
         ),
       ),

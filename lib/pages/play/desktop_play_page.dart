@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class DesktopPlayPage extends StatelessWidget {
   const DesktopPlayPage({super.key});
@@ -18,7 +18,7 @@ class DesktopPlayPage extends StatelessWidget {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            IconButton(onPressed: () => context.pop(), icon: Icon(HugeIconsSolid.cancel01)),
+            IconButton(onPressed: () => context.pop(), icon: Icon(HugeIcons.strokeRoundedCancel01)),
             Text('Now Playing')
           ],
         ),

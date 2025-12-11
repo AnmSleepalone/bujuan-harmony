@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get_it/get_it.dart';
-import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 AppBar mainAppBar() {
   return AppBar(
@@ -22,7 +22,7 @@ AppBar mainAppBar() {
                   .read(themeModeNotifierProvider.notifier)
                   .setTheme(isDark ? ThemeMode.light : ThemeMode.dark);
             },
-            icon: Icon(HugeIconsSolid.search01));
+            icon: Icon(HugeIcons.strokeRoundedSearch01));
       })
     ],
   );

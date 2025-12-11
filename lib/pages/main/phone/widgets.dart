@@ -7,7 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../../common/bujuan_music_handler.dart';
 import '../../../common/values/app_config.dart';
@@ -182,7 +182,7 @@ class _AnimatedSongInfoBar extends StatelessWidget {
           SizedBox(width: 18.w),
           TogglePlayButton(22.sp),
           ControlButton(
-              image: HugeIconsStroke.next, onTap: () => BujuanMusicHandler().skipToNext()),
+              image: HugeIcons.strokeRoundedNext, onTap: () => BujuanMusicHandler().skipToNext()),
           SizedBox(width: 8.w),
         ],
       ),
@@ -216,7 +216,7 @@ class TogglePlayButton extends ConsumerWidget {
     return IconButton(
       onPressed: () => BujuanMusicHandler().playOrPause(),
       icon: Icon(
-        playing ? HugeIconsStroke.pause : HugeIconsStroke.play,
+        playing ? HugeIcons.strokeRoundedPause : HugeIcons.strokeRoundedPlay,
         size: size,
       ),
     );

@@ -1,5 +1,5 @@
 import 'package:bujuan_music/pages/main/provider.dart';
-import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../pages/main/main_page.dart';
 import '../../router/app_router.dart';
@@ -9,10 +9,10 @@ class AppConfig {
   static const String backgroundPath = 'backgroundPath';
 
   static final List<BottomData> bottomItems = [
-    BottomData(HugeIconsStroke.home01, HugeIconsSolid.home01, AppRouter.home, 'Home'),
-    BottomData(HugeIconsStroke.lookTop, HugeIconsSolid.lookTop, AppRouter.user, 'Me'),
-    BottomData(HugeIconsStroke.fileMusic, HugeIconsSolid.fileMusic, AppRouter.setting, 'File'),
-    BottomData(HugeIconsStroke.settings02, HugeIconsSolid.settings02, AppRouter.setting, 'Setting'),
+    BottomData(HugeIcons.strokeRoundedHome01, HugeIcons.strokeRoundedHome01, AppRouter.home, 'Home'),
+    BottomData(HugeIcons.strokeRoundedLookTop, HugeIcons.strokeRoundedLookTop, AppRouter.user, 'Me'),
+    BottomData(HugeIcons.strokeRoundedFileMusic, HugeIcons.strokeRoundedFileMusic, AppRouter.setting, 'File'),
+    BottomData(HugeIcons.strokeRoundedSettings02, HugeIcons.strokeRoundedSettings02, AppRouter.setting, 'Setting'),
   ];
 
   static HomeStyleType homeStyleType = HomeStyleType.bottomBar;

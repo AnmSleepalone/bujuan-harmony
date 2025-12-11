@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../utils/adaptive_screen_utils.dart';
 import '../../widgets/loading.dart';
@@ -69,7 +69,7 @@ class DesktopPlayList extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            onPressed: () => context.pop(), icon: Icon(HugeIconsSolid.cancel01)),
+            onPressed: () => context.pop(), icon: Icon(HugeIcons.strokeRoundedCancel01)),
         title: Text(details.detail.playlist?.name ?? ''),
         backgroundColor: Colors.transparent,
       ),
