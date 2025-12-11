@@ -16,7 +16,7 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:window_manager/window_manager.dart';
+// import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,29 +33,31 @@ void main() async {
   getIt.registerSingleton<WeSlideController>(WeSlideController(),instanceName: 'panel');
   getIt.registerSingleton<Box>(Hive.box('bujuan'));
   // 让布局真正覆盖状态栏和底部手势栏
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  // 注意：鸿蒙暂不支持 edgeToEdge，如需启用请添加平台判断
+  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   runApp(ProviderScope(child: MyApp()));
 }
 
-/// 初始化窗口
+/// 初始化窗口（仅桌面平台）
 Future<void> initWindow() async {
+  // 只在桌面平台（非鸿蒙、非Android、非iOS）使用 window_manager
   if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-    // await rive.RiveNative.init();
-    await windowManager.ensureInitialized();
-    WindowOptions windowOptions = WindowOptions(
-      size: Size(1024, 650),
-      // minimumSize: Size(1024, 650),
-      maximumSize: Size(1024, 800),
-      center: true,
-      backgroundColor: Colors.transparent,
-      skipTaskbar: false,
-      titleBarStyle: TitleBarStyle.hidden,
-    );
-    windowManager.waitUntilReadyToShow(windowOptions, () async {
-      await windowManager.show();
-      await windowManager.focus();
-    });
+    // window_manager 已在 pubspec.yaml 中注释，如需桌面端支持请取消注释
+    // await windowManager.ensureInitialized();
+    // WindowOptions windowOptions = WindowOptions(
+    //   size: Size(1024, 650),
+    //   maximumSize: Size(1024, 800),
+    //   center: true,
+    //   backgroundColor: Colors.transparent,
+    //   skipTaskbar: false,
+    //   titleBarStyle: TitleBarStyle.hidden,
+    // );
+    // windowManager.waitUntilReadyToShow(windowOptions, () async {
+    //   await windowManager.show();
+    //   await windowManager.focus();
+    // });
   }
+  // 鸿蒙、Android、iOS 等移动平台无需窗口管理
 }
 
 /// 初始化音频服务
@@ -119,7 +121,7 @@ class MyApp extends ConsumerWidget {
           title: 'Bujuan',
           themeMode: themeMode,
           darkTheme: AppTheme.dark,
-          showPerformanceOverlay: true,
+          showPerformanceOverlay: false,
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light,
           routerConfig: router,

@@ -29,6 +29,12 @@ dependencies:
       ref: br_path_provider-v2.1.5_ohos
       path: packages/path_provider/path_provider
 
+  path_provider_ohos:
+    git:
+      url: https://gitcode.com/openharmony-tpc/flutter_packages.git
+      ref: br_path_provider-v2.1.5_ohos
+      path: packages/path_provider/path_provider_ohos
+
   cached_network_image: ^3.2.3
   hugeicons: ^0.0.7
   get_it: ^8.0.3
@@ -48,8 +54,10 @@ dependencies:
       url: https://gitcode.com/openharmony-sig/flutter_audio_session.git
 
   flutter_zoom_drawer: ^3.2.0
-  pinput: ^5.0.1
-  window_manager: ^0.5.0
+  pinput:
+    path: ./plugin/pinput-5.0.2-ohos
+  qr_flutter: ^4.1.0
+  #window_manager: ^0.5.0
   hive_ce: ^2.11.3
   hive_ce_flutter: ^2.3.1
   sheetify: ^1.0.2
@@ -82,6 +90,11 @@ dependency_overrides:
       url: https://gitcode.com/openharmony-tpc/flutter_packages.git
       ref: br_path_provider-v2.1.5_ohos
       path: packages/path_provider/path_provider
+  path_provider_ohos:
+    git:
+      url: https://gitcode.com/openharmony-tpc/flutter_packages.git
+      ref: br_path_provider-v2.1.5_ohos
+      path: packages/path_provider/path_provider_ohos
   file: ^7.0.0
   uuid: ^4.4.2
   http: ^1.2.2

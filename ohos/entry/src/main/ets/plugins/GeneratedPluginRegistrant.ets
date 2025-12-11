@@ -1,6 +1,7 @@
 import { FlutterEngine, Log } from '@ohos/flutter_ohos';
 import AudioSessionPlugin from 'audio_session';
 import AudioplayersPlugin from 'audioplayers_ohos';
+import PathProviderPlugin from 'path_provider_ohos';
 import AudioServicePlugin from 'audio_service_ohos';
 
 /**
@@ -17,6 +18,7 @@ export class GeneratedPluginRegistrant {
     try {
       flutterEngine.getPlugins()?.add(new AudioSessionPlugin());
       flutterEngine.getPlugins()?.add(new AudioplayersPlugin());
+      flutterEngine.getPlugins()?.add(new PathProviderPlugin());
       flutterEngine.getPlugins()?.add(new AudioServicePlugin());
     } catch (e) {
       Log.e(

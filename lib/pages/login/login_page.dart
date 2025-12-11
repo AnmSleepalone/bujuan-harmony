@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bujuan_music/common/values/app_images.dart';
 import 'package:bujuan_music/router/app_router.dart';
 import 'package:bujuan_music_api/bujuan_music_api.dart';
@@ -6,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:pinput/pinput.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,6 +19,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   TextEditingController phoneController = TextEditingController();
+  Timer? _qrCheckTimer;
+
   final defaultPinTheme = PinTheme(
     width: 56.w,
     height: 56.w,
@@ -76,16 +81,19 @@ class _LoginPageState extends State<LoginPage> {
               child: Text('Get an SMS QR code'),
             ),
             SizedBox(height: 60.w),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(HugeIcons.strokeRoundedQrCode),
-                SizedBox(width: 10.w),
-                Text(
-                  'QR code login',
-                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
-                ),
-              ],
+            GestureDetector(
+              onTap: () => showQrCodeBottomSheet(),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(HugeIcons.strokeRoundedQrCode),
+                  SizedBox(width: 10.w),
+                  Text(
+                    'QR code login',
+                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
             )
           ],
         ),
@@ -95,14 +103,23 @@ class _LoginPageState extends State<LoginPage> {
 
   void showCodeBottomSheet() async {
     if (phoneController.text.isEmpty) {
+      print('Phone number is empty');
       return;
     }
-    var boolEntity = await BujuanMusicManager().sendSmsCode(phone: phoneController.text);
-    if (boolEntity != null && mounted) {
-      showModalBottomSheet(
+
+    print('Sending SMS code to: ${phoneController.text}');
+
+    try {
+      var boolEntity = await BujuanMusicManager().sendSmsCode(phone: phoneController.text);
+      print('SMS API response: $boolEntity');
+
+      if (boolEntity != null && mounted) {
+        print('Showing verification bottom sheet');
+        showModalBottomSheet(
           context: context,
           builder: (BuildContext context) {
             return Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(height: 30.w),
                 Text('Verification',
@@ -117,6 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                   autofocus: true,
                   defaultPinTheme: defaultPinTheme,
                   onCompleted: (v) {
+                    print('Pinput onCompleted triggered with value: $v');
                     goToHome(v);
                   },
                 ),
@@ -144,23 +162,321 @@ class _LoginPageState extends State<LoginPage> {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20.w), topRight: Radius.circular(20.w))));
+      } else {
+        print('SMS API returned null, cannot show bottom sheet');
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('发送失败'),
+              content: Text('发送验证码失败，请稍后重试'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('确定'),
+                ),
+              ],
+            ),
+          );
+        }
+      }
+    } catch (e, stackTrace) {
+      print('SMS sending error: $e');
+      print('Stack trace: $stackTrace');
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('发送异常'),
+            content: Text('发送验证码时发生异常，请检查网络连接'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('确定'),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 
   void goToHome(String code) async {
-    var loginEntity = await BujuanMusicManager()
-        .loginCellPhone(phone: phoneController.text, captcha: code);
-    if (loginEntity != null && loginEntity.code == 200) {
-      phoneController.text = '';
+    print('goToHome called with code: $code and phone: ${phoneController.text}');
+
+    try {
+      var loginEntity = await BujuanMusicManager()
+          .loginCellPhone(phone: phoneController.text, captcha: code);
+
+      print('Login API response: ${loginEntity?.toJson()}');
+
+      if (loginEntity != null && loginEntity.code == 200) {
+        phoneController.text = '';
+        if (mounted) {
+          print('Login success, navigating to home');
+          context.replace(AppRouter.home);
+        }
+      } else {
+        final errorCode = loginEntity?.code;
+        print('Login failed: code=$errorCode');
+
+        String errorMessage;
+        switch (errorCode) {
+          case 400:
+            errorMessage = '请求错误，请检查输入信息';
+            break;
+          case 410:
+            errorMessage = '验证码错误或已过期';
+            break;
+          case 502:
+            errorMessage = '服务器错误，请稍后重试';
+            break;
+          case 503:
+            errorMessage = '服务暂时不可用';
+            break;
+          default:
+            errorMessage = '登录失败 (错误码: $errorCode)';
+        }
+
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('登录失败'),
+              content: Text(errorMessage),
+              actions: [
+                if (errorCode == 410) ...[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context); // 关闭对话框
+                      Navigator.pop(context); // 关闭底部弹窗
+                      showCodeBottomSheet(); // 重新获取验证码
+                    },
+                    child: Text('重新获取'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('取消'),
+                  ),
+                ] else
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('确定'),
+                  ),
+              ],
+            ),
+          );
+        }
+      }
+    } catch (e, stackTrace) {
+      print('Login error: $e');
+      print('Stack trace: $stackTrace');
       if (mounted) {
-        context.replace(AppRouter.home);
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('登录异常'),
+            content: Text('登录时发生异常，请检查网络连接后重试'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('确定'),
+              ),
+            ],
+          ),
+        );
       }
     }
+  }
+
+  void showQrCodeBottomSheet() async {
+    print('Starting QR code login flow');
+
+    try {
+      // 获取二维码key
+      var qrKeyEntity = await BujuanMusicManager().qrCodeKey();
+      print('QR key response: ${qrKeyEntity?.toJson()}');
+
+      if (qrKeyEntity == null || qrKeyEntity.unikey == null || qrKeyEntity.unikey!.isEmpty) {
+        print('Failed to get QR key');
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('获取二维码失败'),
+              content: Text('无法生成二维码,请稍后重试'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('确定'),
+                ),
+              ],
+            ),
+          );
+        }
+        return;
+      }
+
+      final qrKey = qrKeyEntity.unikey!;
+      final qrCodeUrl = BujuanMusicManager().qrCode(key: qrKey);
+      print('QR code URL: $qrCodeUrl');
+
+      if (mounted) {
+        showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return Container(
+                  padding: EdgeInsets.symmetric(vertical: 30.w, horizontal: 20.w),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('扫码登录',
+                          style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.w600)),
+                      SizedBox(height: 20.w),
+                      Text('请使用网易云音乐APP扫描二维码',
+                          style: TextStyle(fontSize: 14.sp, color: Colors.grey[600])),
+                      SizedBox(height: 30.w),
+                      // 二维码
+                      Container(
+                        padding: EdgeInsets.all(20.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15.w),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withAlpha(10),
+                              blurRadius: 10,
+                              offset: Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        child: QrImageView(
+                          data: qrCodeUrl,
+                          version: QrVersions.auto,
+                          size: 200.w,
+                          backgroundColor: Colors.white,
+                        ),
+                      ),
+                      SizedBox(height: 30.w),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+          isScrollControlled: true,
+          useSafeArea: true,
+          enableDrag: true,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.w), topRight: Radius.circular(20.w))),
+        ).then((_) {
+          // 当底部弹窗关闭时,取消轮询
+          _qrCheckTimer?.cancel();
+          _qrCheckTimer = null;
+          print('QR code bottom sheet closed, timer cancelled');
+        });
+
+        // 开始轮询检查二维码状态
+        startQrCodePolling(qrKey);
+      }
+    } catch (e, stackTrace) {
+      print('QR code generation error: $e');
+      print('Stack trace: $stackTrace');
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('二维码生成异常'),
+            content: Text('生成二维码时发生异常,请检查网络连接'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('确定'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
+
+  void startQrCodePolling(String qrKey) {
+    print('Starting QR code polling with key: $qrKey');
+
+    // 每3秒检查一次二维码状态
+    _qrCheckTimer = Timer.periodic(Duration(seconds: 3), (timer) async {
+      try {
+        print('Checking QR code status...');
+        var checkResult = await BujuanMusicManager().checkQrCode(key: qrKey);
+        print('QR check result: ${checkResult?.toJson()}');
+
+        if (checkResult != null) {
+          final code = checkResult.code;
+
+          // 800: 二维码已过期
+          // 801: 等待扫码
+          // 802: 待确认
+          // 803: 授权登录成功
+          switch (code) {
+            case 800:
+              print('QR code expired');
+              timer.cancel();
+              _qrCheckTimer = null;
+              if (mounted) {
+                Navigator.pop(context); // 关闭底部弹窗
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('二维码已过期'),
+                    content: Text('请重新获取二维码'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text('确定'),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              break;
+
+            case 803:
+              print('QR code login success');
+              timer.cancel();
+              _qrCheckTimer = null;
+              if (mounted) {
+                Navigator.pop(context); // 关闭底部弹窗
+                print('Navigating to home after QR login success');
+                context.replace(AppRouter.home);
+              }
+              break;
+
+            case 802:
+              print('QR code scanned, waiting for confirmation');
+              break;
+
+            case 801:
+              print('Waiting for QR code scan');
+              break;
+
+            default:
+              print('Unknown QR code status: $code');
+          }
+        }
+      } catch (e) {
+        print('Error checking QR code: $e');
+        // 不中断轮询,继续检查
+      }
+    });
   }
 
   @override
   void dispose() {
     phoneController.dispose();
+    _qrCheckTimer?.cancel();
     super.dispose();
   }
 }
