@@ -1,6 +1,6 @@
 {
-    "name": "bujuan_music",
-    "short_name": "bujuan_music",
+    "name": "bujuan",
+    "short_name": "bujuan",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
