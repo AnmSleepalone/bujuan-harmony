@@ -78,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              child: Text('Get an SMS QR code'),
+              child: Text('Get SMS verification code'),
             ),
             SizedBox(height: 60.w),
             GestureDetector(
@@ -110,10 +110,10 @@ class _LoginPageState extends State<LoginPage> {
     print('Sending SMS code to: ${phoneController.text}');
 
     try {
-      var boolEntity = await BujuanMusicManager().sendSmsCode(phone: phoneController.text);
+      var boolEntity = await BujuanMusicManager().captchaSend(phoneController.text);
       print('SMS API response: $boolEntity');
 
-      if (boolEntity != null && mounted) {
+      if (boolEntity != null && boolEntity.code == 200 && mounted) {
         print('Showing verification bottom sheet');
         showModalBottomSheet(
           context: context,
@@ -144,6 +144,10 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(color: Color(0XFF1ED760)),
                 ),
                 GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    showCodeBottomSheet();
+                  },
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 5.w),
                     child: Text('Resend',
@@ -163,7 +167,7 @@ class _LoginPageState extends State<LoginPage> {
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20.w), topRight: Radius.circular(20.w))));
       } else {
-        print('SMS API returned null, cannot show bottom sheet');
+        print('SMS API returned error, cannot show bottom sheet');
         if (mounted) {
           showDialog(
             context: context,
@@ -205,47 +209,41 @@ class _LoginPageState extends State<LoginPage> {
     print('goToHome called with code: $code and phone: ${phoneController.text}');
 
     try {
-      var loginEntity = await BujuanMusicManager()
-          .loginCellPhone(phone: phoneController.text, captcha: code);
+      var verifyEntity = await BujuanMusicManager()
+          .captchaVerify(phoneController.text, code);
 
-      print('Login API response: ${loginEntity?.toJson()}');
+      print('Verification API response: ${verifyEntity?.toJson()}');
 
-      if (loginEntity != null && loginEntity.code == 200) {
+      if (verifyEntity != null && verifyEntity.code == 200) {
         phoneController.text = '';
         if (mounted) {
-          print('Login success, navigating to home');
+          print('Verification success, navigating to home');
           context.replace(AppRouter.home);
         }
       } else {
-        final errorCode = loginEntity?.code;
-        print('Login failed: code=$errorCode');
+        final errorCode = verifyEntity?.code;
+        print('Verification failed: code=$errorCode');
 
         String errorMessage;
         switch (errorCode) {
           case 400:
             errorMessage = '请求错误，请检查输入信息';
             break;
-          case 410:
+          case 503:
             errorMessage = '验证码错误或已过期';
             break;
-          case 502:
-            errorMessage = '服务器错误，请稍后重试';
-            break;
-          case 503:
-            errorMessage = '服务暂时不可用';
-            break;
           default:
-            errorMessage = '登录失败 (错误码: $errorCode)';
+            errorMessage = '验证失败 (错误码: $errorCode)';
         }
 
         if (mounted) {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: Text('登录失败'),
+              title: Text('验证失败'),
               content: Text(errorMessage),
               actions: [
-                if (errorCode == 410) ...[
+                if (errorCode == 503) ...[
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context); // 关闭对话框
@@ -269,14 +267,14 @@ class _LoginPageState extends State<LoginPage> {
         }
       }
     } catch (e, stackTrace) {
-      print('Login error: $e');
+      print('Verification error: $e');
       print('Stack trace: $stackTrace');
       if (mounted) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('登录异常'),
-            content: Text('登录时发生异常，请检查网络连接后重试'),
+            title: Text('验证异常'),
+            content: Text('验证时发生异常，请检查网络连接后重试'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
@@ -294,7 +292,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       // 获取二维码key
-      var qrKeyEntity = await BujuanMusicManager().qrCodeKey();
+      var qrKeyEntity = await BujuanMusicManager().loginQrCodeKey();
       print('QR key response: ${qrKeyEntity?.toJson()}');
 
       if (qrKeyEntity == null || qrKeyEntity.unikey == null || qrKeyEntity.unikey!.isEmpty) {
@@ -318,7 +316,7 @@ class _LoginPageState extends State<LoginPage> {
       }
 
       final qrKey = qrKeyEntity.unikey!;
-      final qrCodeUrl = BujuanMusicManager().qrCode(key: qrKey);
+      final qrCodeUrl = BujuanMusicManager().loginQrCodeUrl(qrKey);
       print('QR code URL: $qrCodeUrl');
 
       if (mounted) {
@@ -410,7 +408,7 @@ class _LoginPageState extends State<LoginPage> {
     _qrCheckTimer = Timer.periodic(Duration(seconds: 3), (timer) async {
       try {
         print('Checking QR code status...');
-        var checkResult = await BujuanMusicManager().checkQrCode(key: qrKey);
+        var checkResult = await BujuanMusicManager().loginQrCodeCheck(qrKey);
         print('QR check result: ${checkResult?.toJson()}');
 
         if (checkResult != null) {

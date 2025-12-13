@@ -25,7 +25,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void getUserInfo() async {
-    var userInfo = await BujuanMusicManager().userInfo();
+    var userInfo = await BujuanMusicManager().loginAccountInfo();
     var bool = (userInfo != null && userInfo.account != null);
     if(bool) GetIt.I<Box>().put(AppConfig.userInfoKey, jsonEncode(userInfo.profile?.toJson()));
     if (mounted) {

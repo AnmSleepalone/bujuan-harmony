@@ -46,3 +46,7 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+/ohos/oh_modules
+/ohos/entry/build
+/ohos/entry/build/default
+/ohos/entry/build

@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:bujuan_music/common/values/app_config.dart';
-import 'package:bujuan_music_api/api/user/entity/user_info_entity.dart';
-import 'package:bujuan_music_api/api/user/entity/user_playlist_entity.dart';
 import 'package:bujuan_music_api/bujuan_music_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
@@ -16,19 +14,19 @@ Future<UserData> newAlbum(Ref ref) async {
   try {
     String userInfo = GetIt.I<Box>().get(AppConfig.userInfoKey, defaultValue: '');
     if (userInfo.isNotEmpty) {
-      var user = UserInfoProfile.fromJson(jsonDecode(userInfo));
-      var userPlaylistEntity = await BujuanMusicManager().userPlaylist(uid: '${user.userId ?? 0}');
-      return UserData(userPlaylistEntity ?? UserPlaylistEntity(), user);
+      var user = NeteaseAccountProfile.fromJson(jsonDecode(userInfo));
+      var userPlaylistEntity = await BujuanMusicManager().userPlayList('${user.userId ?? 0}');
+      return UserData(userPlaylistEntity ?? MultiPlayListWrap2(), user);
     }
-    return UserData(UserPlaylistEntity(), UserInfoProfile());
+    return UserData(MultiPlayListWrap2(), NeteaseAccountProfile());
   } catch (e) {
-    return UserData(UserPlaylistEntity(), UserInfoProfile());
+    return UserData(MultiPlayListWrap2(), NeteaseAccountProfile());
   }
 }
 
 class UserData {
-  UserPlaylistEntity likeList;
-  UserInfoProfile userInfo;
+  MultiPlayListWrap2 likeList;
+  NeteaseAccountProfile userInfo;
 
   UserData(this.likeList, this.userInfo);
 }

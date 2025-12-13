@@ -1,13 +1,27 @@
 {
   "app": {
-    "signingConfigs": [],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "C:/Users/Administrator/.ohos/config/default_ohos_XxX3t-4C7FpzdQMDyiqO_HdIe3H2xrAq90TvhmLR4VY=.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001A505FB7C11B6C3EB83CFC126E621F3085E9F6E34E4724020032F1FBC3512DF565C1CCA3644CFA",
+          "profile": "C:/Users/Administrator/.ohos/config/default_ohos_XxX3t-4C7FpzdQMDyiqO_HdIe3H2xrAq90TvhmLR4VY=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:/Users/Administrator/.ohos/config/default_ohos_XxX3t-4C7FpzdQMDyiqO_HdIe3H2xrAq90TvhmLR4VY=.p12",
+          "storePassword": "0000001A93D613C084E98E28B97957702D68E1FAEC3F1FCFFB814E849A4C38FB24F9C16CF68E18043155"
+        }
+      }
+    ],
     "products": [
       {
         "name": "default",
         "signingConfig": "default",
         "compatibleSdkVersion": "5.0.0(12)",
         "runtimeOS": "HarmonyOS",
-        "targetSdkVersion": "6.0.0(20)"
+        "targetSdkVersion": "5.0.0(12)"
       }
     ],
     "buildModeSet": [
@@ -26,42 +40,6 @@
     {
       "name": "entry",
       "srcPath": "./entry",
-      "targets": [
-        {
-          "name": "default",
-          "applyToProducts": [
-            "default"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "audio_session",
-      "srcPath": "C:/Users/Administrator/AppData/Local/Pub/Cache/git/flutter_audio_session-d2ff09dfe4df3b366c19cca27562bdb413de20c7/ohos",
-      "targets": [
-        {
-          "name": "default",
-          "applyToProducts": [
-            "default"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "audioplayers_ohos",
-      "srcPath": "C:/Users/Administrator/AppData/Local/Pub/Cache/git/flutter_audioplayers-5b1f0f972b200b543b5ac27c46f8efba63662e12/packages/audioplayers_ohos/ohos",
-      "targets": [
-        {
-          "name": "default",
-          "applyToProducts": [
-            "default"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "audio_service_ohos",
-      "srcPath": "C:/Users/Administrator/AppData/Local/Pub/Cache/git/fluttertpc_audio_service-43be9f21aa33cde5a7855691a00ce52aa06014a7/audio_service_ohos/ohos",
       "targets": [
         {
           "name": "default",

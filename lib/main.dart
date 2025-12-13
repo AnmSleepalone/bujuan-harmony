@@ -15,7 +15,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_ce_flutter/adapters.dart';
-import 'package:path_provider/path_provider.dart';
 // import 'package:window_manager/window_manager.dart';
 
 void main() async {
@@ -62,8 +61,7 @@ Future<void> initWindow() async {
 
 /// 初始化音频服务
 Future<void> initMedia() async {
-  final appDocDir = await getApplicationDocumentsDirectory();
-  await BujuanMusicManager().init(cookiePath: '${appDocDir.path}/cookies', debug: false);
+  await BujuanMusicManager.init(debug: false);
   await AudioService.init(
     builder: () => BujuanMusicHandler(),
     config: AudioServiceConfig(

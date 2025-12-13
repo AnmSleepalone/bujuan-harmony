@@ -6,7 +6,7 @@ part of 'provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$newAlbumHash() => r'25d8563a4bc59260b7288ac0ecbda08d303f295d';
+String _$newAlbumHash() => r'e4dbe600d16606a54af9a787df87ea4f2e2e91aa';
 
 /// See also [newAlbum].
 @ProviderFor(newAlbum)
@@ -22,7 +22,7 @@ final newAlbumProvider = AutoDisposeFutureProvider<HomeData>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef NewAlbumRef = AutoDisposeFutureProviderRef<HomeData>;
-String _$recommendSongsHash() => r'a095ca7deb5c0a1c1e9c5b205557d9366e6bffda';
+String _$recommendSongsHash() => r'08f46d834494483f9bc225f41bf7c8ddd6503647';
 
 /// See also [recommendSongs].
 @ProviderFor(recommendSongs)

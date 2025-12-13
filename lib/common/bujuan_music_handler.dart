@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:bujuan_music_api/api/song/entity/song_url_entity.dart';
-import 'package:bujuan_music_api/common/music_api.dart';
+import 'package:bujuan_music_api/bujuan_music_api.dart';
 
 enum LoopMode {
   one, // 单曲循环
@@ -94,7 +93,7 @@ class BujuanMusicHandler extends BaseAudioHandler with QueueHandler, SeekHandler
 
   /// 获取播放地址
   Future<String> _fetchPlayUrl(String id) async {
-    SongUrlEntity? songUrlEntity = await BujuanMusicManager().songUrl(ids: [id]);
+    SongUrlListWrap? songUrlEntity = await BujuanMusicManager().songUrl([id]);
     if (songUrlEntity != null && (songUrlEntity.data ?? []).isNotEmpty) {
       return songUrlEntity.data!.first.url ?? '';
     }

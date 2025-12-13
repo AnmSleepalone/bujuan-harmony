@@ -250,7 +250,7 @@ packages:
       path: "plugin/bujuan_music_api"
       relative: true
     source: path
-    version: "0.0.1"
+    version: "1.0.0"
   cached_network_image:
     dependency: "direct main"
     description:

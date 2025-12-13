@@ -58,11 +58,12 @@ final playbackStateProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef PlaybackStateRef = AutoDisposeStreamProviderRef<PlaybackState?>;
-String _$userInfoHash() => r'685d7e3dbd996c2d9b02c72b3be45af2bc290f76';
+String _$userInfoHash() => r'37ca86b3f6a2f92534a229e5bee178986fb8ae7f';
 
 /// See also [userInfo].
 @ProviderFor(userInfo)
-final userInfoProvider = AutoDisposeFutureProvider<UserInfoEntity?>.internal(
+final userInfoProvider =
+    AutoDisposeFutureProvider<NeteaseAccountInfoWrap?>.internal(
   userInfo,
   name: r'userInfoProvider',
   debugGetCreateSourceHash:
@@ -73,12 +74,12 @@ final userInfoProvider = AutoDisposeFutureProvider<UserInfoEntity?>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef UserInfoRef = AutoDisposeFutureProviderRef<UserInfoEntity?>;
-String _$mvUrlHash() => r'6d209629a09791dcb89f48e20a42a1b0f3dcf1fc';
+typedef UserInfoRef = AutoDisposeFutureProviderRef<NeteaseAccountInfoWrap?>;
+String _$mvUrlHash() => r'21f9f4ec5e70ab1271c42cebba60da9476bc2757';
 
 /// See also [mvUrl].
 @ProviderFor(mvUrl)
-final mvUrlProvider = AutoDisposeFutureProvider<MvUrlEntity?>.internal(
+final mvUrlProvider = AutoDisposeFutureProvider<MvUrlWrap?>.internal(
   mvUrl,
   name: r'mvUrlProvider',
   debugGetCreateSourceHash:
@@ -89,12 +90,13 @@ final mvUrlProvider = AutoDisposeFutureProvider<MvUrlEntity?>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef MvUrlRef = AutoDisposeFutureProviderRef<MvUrlEntity?>;
-String _$lyricHash() => r'fd840972a572a1ff5bbdc1fd0b0b280fa3cba369';
+typedef MvUrlRef = AutoDisposeFutureProviderRef<MvUrlWrap?>;
+String _$lyricHash() => r'541d4242a12bc4b2a2cc6ff57a407414e80d7259';
 
 /// See also [lyric].
 @ProviderFor(lyric)
-final lyricProvider = AutoDisposeFutureProvider<UserInfoEntity?>.internal(
+final lyricProvider =
+    AutoDisposeFutureProvider<NeteaseAccountInfoWrap?>.internal(
   lyric,
   name: r'lyricProvider',
   debugGetCreateSourceHash:
@@ -105,7 +107,7 @@ final lyricProvider = AutoDisposeFutureProvider<UserInfoEntity?>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef LyricRef = AutoDisposeFutureProviderRef<UserInfoEntity?>;
+typedef LyricRef = AutoDisposeFutureProviderRef<NeteaseAccountInfoWrap?>;
 String _$mediaColorHash() => r'3860228a1db7639806da3d37ea784fde8b5c99fb';
 
 /// See also [mediaColor].

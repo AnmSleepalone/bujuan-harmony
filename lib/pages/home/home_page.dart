@@ -8,8 +8,7 @@ import 'package:bujuan_music/widgets/cache_image.dart';
 import 'package:bujuan_music/widgets/items.dart';
 import 'package:bujuan_music/widgets/loading.dart';
 import 'package:bujuan_music/widgets/main_appbar.dart';
-import 'package:bujuan_music_api/api/recommend/entity/recommend_resource_entity.dart';
-import 'package:bujuan_music_api/api/top/entity/top_artist_entity.dart';
+import 'package:bujuan_music_api/bujuan_music_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -52,8 +51,8 @@ class MobileHome extends StatelessWidget {
   }
 
   Widget _buildContent(HomeData homeData, BuildContext context) {
-    final aristList = homeData.topArtistEntity.artists;
-    final albumList = homeData.recommendResourceEntity.recommend;
+    final aristList = homeData.artistsListWrap.artists;
+    final albumList = homeData.recommendPlayListWrap.recommend;
     final songList = homeData.medias;
     var of2 = MediaQuery.of(context);
     return CustomScrollView(
@@ -80,16 +79,16 @@ class MobileHome extends StatelessWidget {
     );
   }
 
-  Widget _buildAlbumList(List<RecommendResourceRecommend> artists) {
+  Widget _buildAlbumList(List<Play>? artists) {
     return SizedBox(
       height: 168.w,
       child: ListView.separated(
         padding: EdgeInsets.symmetric(horizontal: 15.w),
         scrollDirection: Axis.horizontal,
-        itemCount: artists.length,
+        itemCount: artists?.length ?? 0,
         separatorBuilder: (_, __) => SizedBox(width: 15.w),
         itemBuilder: (context, index) {
-          final album = artists[index];
+          final album = artists?[index];
           return GestureDetector(
             child: SizedBox(
               width: 138.w,
@@ -97,7 +96,7 @@ class MobileHome extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CachedImage(
-                    imageUrl: album.picUrl ?? '',
+                    imageUrl: album?.picUrl ?? '',
                     width: 138.w,
                     height: 138.w,
                     pHeight: 300,
@@ -107,7 +106,7 @@ class MobileHome extends StatelessWidget {
                   ),
                   SizedBox(height: 3.w),
                   Text(
-                    '  ${album.name}',
+                    '  ${album?.name}',
                     style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -116,7 +115,7 @@ class MobileHome extends StatelessWidget {
               ),
             ),
             onTap: () {
-              context.push(AppRouter.playlist, extra: artists[index].id);
+              context.push(AppRouter.playlist, extra: artists?[index].id);
             },
           );
         },
@@ -124,16 +123,16 @@ class MobileHome extends StatelessWidget {
     );
   }
 
-  Widget _buildAristList(List<TopArtistArtists> artists) {
+  Widget _buildAristList(List<Artists>? artists) {
     return SizedBox(
       height: 118.w,
       child: ListView.separated(
         padding: EdgeInsets.symmetric(horizontal: 15.w),
         scrollDirection: Axis.horizontal,
-        itemCount: artists.length,
+        itemCount: artists?.length ?? 0,
         separatorBuilder: (_, __) => SizedBox(width: 15.w),
         itemBuilder: (context, index) {
-          final album = artists[index];
+          final album = artists?[index];
           return GestureDetector(
             child: SizedBox(
               width: 88.w,
@@ -141,7 +140,7 @@ class MobileHome extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   CachedImage(
-                    imageUrl: album.picUrl ?? '',
+                    imageUrl: album?.picUrl ?? '',
                     width: 88.w,
                     height: 88.w,
                     pHeight: 200,
@@ -151,7 +150,7 @@ class MobileHome extends StatelessWidget {
                   ),
                   SizedBox(height: 3.w),
                   Text(
-                    '  ${album.name}',
+                    '  ${album?.name}',
                     style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -160,7 +159,7 @@ class MobileHome extends StatelessWidget {
               ),
             ),
             onTap: () {
-              context.push(AppRouter.playlist, extra: artists[index].id);
+              context.push(AppRouter.playlist, extra: artists?[index].id);
             },
           );
         },
@@ -212,7 +211,7 @@ class DesktopHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var recommend = homeData.recommendResourceEntity.recommend;
+    var recommend = homeData.recommendPlayListWrap.recommend;
     var medias = homeData.medias;
     return SingleChildScrollView(
       padding: EdgeInsets.all(15.w),
@@ -239,7 +238,7 @@ class DesktopHome extends StatelessWidget {
                   child: Column(
                     children: [
                       CachedImage(
-                        imageUrl: recommend[index].picUrl ?? '',
+                        imageUrl: recommend?[index].picUrl ?? '',
                         width: 150.w,
                         height: 150.w,
                         borderRadius: 20.w,
@@ -258,7 +257,7 @@ class DesktopHome extends StatelessWidget {
                   context.push(AppRouter.playlist, extra: recommend[index].id);
                 },
               ),
-              itemCount: recommend.length,
+              itemCount: recommend!.length,
               separatorBuilder: (BuildContext context, int index) => SizedBox(width: 10.w),
             ),
           ),

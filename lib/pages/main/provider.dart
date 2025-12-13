@@ -3,9 +3,7 @@ import 'package:bujuan_music/common/bujuan_music_handler.dart';
 import 'package:bujuan_music/common/values/app_config.dart';
 import 'package:bujuan_music/common/values/app_images.dart';
 import 'package:bujuan_music/widgets/we_slider/weslide_controller.dart';
-import 'package:bujuan_music_api/api/mv/entity/mv_url_entity.dart';
-import 'package:bujuan_music_api/api/user/entity/user_info_entity.dart';
-import 'package:bujuan_music_api/common/music_api.dart';
+import 'package:bujuan_music_api/bujuan_music_api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -103,19 +101,19 @@ Stream<PlaybackState?> playbackState(Ref ref) {
 // _player.onPositionChanged
 
 @riverpod
-Future<UserInfoEntity?> userInfo(Ref ref) async {
-  return await BujuanMusicManager().userInfo();
+Future<NeteaseAccountInfoWrap?> userInfo(Ref ref) async {
+  return await BujuanMusicManager().loginAccountInfo();
 }
 
 @riverpod
-Future<MvUrlEntity?> mvUrl(Ref ref) async {
+Future<MvUrlWrap?> mvUrl(Ref ref) async {
   // var url = ref.watch(mediaItemProvider).value.extras?['mvId'];
   // return await BujuanMusicManager().mvUrl(id: id);
 }
 
 @riverpod
-Future<UserInfoEntity?> lyric(Ref ref) async {
-  return await BujuanMusicManager().userInfo();
+Future<NeteaseAccountInfoWrap?> lyric(Ref ref) async {
+  return await BujuanMusicManager().loginAccountInfo();
 }
 
 @riverpod
