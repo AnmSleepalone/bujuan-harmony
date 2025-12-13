@@ -50,3 +50,7 @@ app.*.map.json
 /ohos/entry/build
 /ohos/entry/build/default
 /ohos/entry/build
+/test
+/.claude
+6A.md
+claude.md

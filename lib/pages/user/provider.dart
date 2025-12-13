@@ -13,13 +13,23 @@ part 'provider.g.dart';
 Future<UserData> newAlbum(Ref ref) async {
   try {
     String userInfo = GetIt.I<Box>().get(AppConfig.userInfoKey, defaultValue: '');
+    print('[UserPage] userInfo from Hive: ${userInfo.isEmpty ? "empty" : "exists"}');
+
     if (userInfo.isNotEmpty) {
       var user = NeteaseAccountProfile.fromJson(jsonDecode(userInfo));
+      print('[UserPage] userId: ${user.userId}');
+
       var userPlaylistEntity = await BujuanMusicManager().userPlayList('${user.userId ?? 0}');
+      print('[UserPage] API returned playlist count: ${userPlaylistEntity.playlist?.length ?? 0}');
+
       return UserData(userPlaylistEntity ?? MultiPlayListWrap2(), user);
     }
+
+    print('[UserPage] No user info found, returning empty UserData');
     return UserData(MultiPlayListWrap2(), NeteaseAccountProfile());
-  } catch (e) {
+  } catch (e, stackTrace) {
+    print('[UserPage] Error loading user data: $e');
+    print('[UserPage] StackTrace: $stackTrace');
     return UserData(MultiPlayListWrap2(), NeteaseAccountProfile());
   }
 }

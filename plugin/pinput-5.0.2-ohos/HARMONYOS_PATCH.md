@@ -51,10 +51,7 @@ dependencies:
 
 ## 维护说明
 
-### 为什么使用本地依赖？
-1. **pub-cache 修改会被覆盖**：直接修改 pub-cache 中的文件在运行 `flutter pub get`、`flutter pub upgrade` 或 `flutter clean` 后会丢失
-2. **版本控制**：本地依赖可以纳入项目的版本控制系统
-3. **团队协作**：团队其他成员克隆项目后无需手动修改第三方包
+
 
 ### 注意事项
 1. 不要删除 `plugin/pinput-5.0.2-ohos` 目录
@@ -64,12 +61,4 @@ dependencies:
    - 更新本地目录
 3. 此修改仅影响鸿蒙平台，不影响其他平台的正常使用
 
-## 修改日期
-2025-12-11
 
-## 修改人
-Claude Code (AI Assistant)
-
-## 相关 Issue
-- pinput 官方仓库尚未支持鸿蒙平台
-- 建议向官方提交 PR 以获得长期支持

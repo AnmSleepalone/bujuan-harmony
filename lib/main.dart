@@ -69,6 +69,11 @@ Future<void> initMedia() async {
       androidNotificationChannelName: 'Music playback',
     ),
   );
+
+  // 恢复播放状态（延迟执行以确保 UI 完全初始化）
+  Future.delayed(Duration(seconds: 1), () {
+    BujuanMusicHandler().restorePlaybackState();
+  });
 }
 
 /// 开启本地代理服务

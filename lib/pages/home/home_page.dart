@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     bool desktop = medium(context) || expanded(context);
     return Scaffold(
-      appBar: desktop ? null : mainAppBar(),
+      appBar: desktop ? null : mainAppBar(context),
       body: Consumer(
         builder: (context, ref, child) {
           final album = ref.watch(newAlbumProvider);
@@ -54,23 +54,31 @@ class MobileHome extends StatelessWidget {
     final aristList = homeData.artistsListWrap.artists;
     final albumList = homeData.recommendPlayListWrap.recommend;
     final songList = homeData.medias;
-    var of2 = MediaQuery.of(context);
     return CustomScrollView(
       slivers: [
         SliverPadding(padding: EdgeInsets.symmetric(vertical: 5.w)),
         SliverToBoxAdapter(
             child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 15.w),
-          child: GestureDetector(
-            child: Image.asset(AppImages.banner, width: 345.w, height: 148.w, fit: BoxFit.fill),
-            onTap: () => context.push(AppRouter.today),
-          ),
+          child: Image.asset(AppImages.banner, width: 345.w, height: 148.w, fit: BoxFit.fill),
         )),
-        SliverToBoxAdapter(child: _buildTitle('Top Arist', onTap: () {})),
+        SliverToBoxAdapter(
+            child: _buildTitle('Top Arist', onTap: () {
+          // TODO: 跳转到完整的艺术家列表页（功能待开发）
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('艺术家完整列表功能开发中...'), duration: Duration(seconds: 2)),
+          );
+        })),
         SliverToBoxAdapter(child: _buildAristList(aristList)),
-        SliverToBoxAdapter(child: _buildTitle('Top Album', onTap: () {})),
+        SliverToBoxAdapter(
+            child: _buildTitle('Top Album', onTap: () {
+          // TODO: 跳转到完整的专辑列表页（功能待开发）
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('专辑完整列表功能开发中...'), duration: Duration(seconds: 2)),
+          );
+        })),
         SliverToBoxAdapter(child: _buildAlbumList(albumList)),
-        SliverToBoxAdapter(child: _buildTitle('New Song', onTap: () {})),
+        SliverToBoxAdapter(child: _buildTitle('New Song')),
         _buildSongList(songList),
         SliverToBoxAdapter(
           child: DynamicPadding(),
@@ -159,7 +167,13 @@ class MobileHome extends StatelessWidget {
               ),
             ),
             onTap: () {
-              context.push(AppRouter.playlist, extra: artists?[index].id);
+              // Artists的id是String类型，需要转换为int
+              final artistId = artists?[index].id;
+              if (artistId != null) {
+                final id = int.tryParse(artistId) ?? 0;
+                print('[HomePage] Artist clicked - id: $artistId (converted to: $id)');
+                context.push(AppRouter.artist, extra: id);
+              }
             },
           );
         },
@@ -238,7 +252,7 @@ class DesktopHome extends StatelessWidget {
                   child: Column(
                     children: [
                       CachedImage(
-                        imageUrl: recommend?[index].picUrl ?? '',
+                        imageUrl: recommend[index].picUrl ?? '',
                         width: 150.w,
                         height: 150.w,
                         borderRadius: 20.w,
@@ -277,7 +291,7 @@ class DesktopHome extends StatelessWidget {
                   child: Column(
                     children: [
                       CachedImage(
-                        imageUrl: medias[index].artUri.toString() ?? '',
+                        imageUrl: medias[index].artUri.toString(),
                         width: 80.w,
                         height: 80.w,
                         borderRadius: 40.w,

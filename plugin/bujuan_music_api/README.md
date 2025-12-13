@@ -3,7 +3,7 @@
 [![Pub Version](https://img.shields.io/badge/pub-v1.0.0-blue)](https://pub.dev)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-一个完整的网易云音乐API Flutter插件，支持所有主要功能。本插件从[不卷音乐](https://github.com/2697a/bujuan)项目提取，**专为API不可用的分支设计**。
+一个完整的网易云音乐API Flutter插件，支持所有主要功能。本插件从[不卷音乐](https://github.com/2697a/bujuan)项目提取。
 
 ## ✨ 特性
 

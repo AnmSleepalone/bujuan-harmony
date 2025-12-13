@@ -1,7 +1,9 @@
+import 'package:bujuan_music/pages/artist/artist_page.dart';
 import 'package:bujuan_music/pages/home/today/today_page.dart';
 import 'package:bujuan_music/pages/mv/mv_page.dart';
 import 'package:bujuan_music/pages/play/desktop_play_page.dart';
 import 'package:bujuan_music/pages/playlist/playlist_page.dart';
+import 'package:bujuan_music/pages/search/search_page.dart';
 import 'package:bujuan_music/pages/setting/setting_page.dart';
 import 'package:bujuan_music/pages/user/user_page.dart';
 import 'package:bujuan_music/router/app_router.dart';
@@ -24,7 +26,23 @@ class AppPages {
         pageBuilder: (context, state) =>
             buildPageWithSlideUpTransition(state: state, child: DesktopPlayPage())),
     GoRoute(
-        path: AppRouter.playlist, builder: (context, state) => PlaylistPage(state.extra as int)),
+        path: AppRouter.playlist,
+        builder: (context, state) {
+          // 处理 String 和 int 两种类型的 id
+          final id = state.extra;
+          final playlistId = id is int ? id : int.tryParse(id.toString()) ?? 0;
+          print('[Router] Playlist route - received id type: ${id.runtimeType}, converted to: $playlistId');
+          return PlaylistPage(playlistId);
+        }),
+    GoRoute(
+        path: AppRouter.artist,
+        builder: (context, state) {
+          // 处理 String 和 int 两种类型的 id
+          final id = state.extra;
+          final artistId = id is int ? id : int.tryParse(id.toString()) ?? 0;
+          print('[Router] Artist route - received id type: ${id.runtimeType}, converted to: $artistId');
+          return ArtistPage(artistId);
+        }),
     GoRoute(
       path: AppRouter.user,
       pageBuilder: (context, state) => NoTransitionPage(child: UserPage()),
@@ -33,12 +51,24 @@ class AppPages {
       path: AppRouter.setting,
       pageBuilder: (context, state)=>  NoTransitionPage(child: SettingPage()),
     ),
+    GoRoute(
+      path: AppRouter.search,
+      builder: (context, state) => SearchPage(),
+    ),
   ];
 
   static final rootRouter = [
     GoRoute(path: AppRouter.login, builder: (c, s) => const LoginPage()),
     GoRoute(path: AppRouter.splash, builder: (c, s) => const SplashPage()),
-    GoRoute(path: AppRouter.mv, builder: (c, s) => MvPage(s.extra as int)),
+    GoRoute(
+        path: AppRouter.mv,
+        builder: (c, s) {
+          // 处理 String 和 int 两种类型的 id
+          final id = s.extra;
+          final mvId = id is int ? id : int.tryParse(id.toString()) ?? 0;
+          print('[Router] MV route - received id type: ${id.runtimeType}, converted to: $mvId');
+          return MvPage(mvId);
+        }),
   ];
 
   static Page<dynamic> buildPageWithSlideUpTransition({

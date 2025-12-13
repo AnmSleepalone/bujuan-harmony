@@ -66,14 +66,22 @@ class MusicControlsSection extends StatelessWidget {
             child: Icon(Icons.remove_rounded, color: Colors.grey.withAlpha(120), size: 62.w),
           ),
         ),
-        AlbumWidget(),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 30.w),
-          child: MusicProgressBar(),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                AlbumWidget(),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 30.w),
+                  child: MusicProgressBar(),
+                ),
+                SizedBox(height: 60.w),
+                const PlaybackControls(),
+                SizedBox(height: 40.w),
+              ],
+            ),
+          ),
         ),
-        SizedBox(height: 60.w),
-        const PlaybackControls(),
-        SizedBox(height: 40.w),
       ],
     );
   }

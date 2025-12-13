@@ -10,11 +10,15 @@
     },
     {
       "name": "EntryAbility_label",
-      "value": "bujuan_music"
+      "value": "不倦音乐"
     },
     {
       "name": "network_reason",
-      "value": "使用网络"
+      "value": "使用网络请求音乐图片歌词等资源"
+    },
+    {
+      "name": "background_running_reason",
+      "value": "后台播放音乐需要"
     }
   ]
 }

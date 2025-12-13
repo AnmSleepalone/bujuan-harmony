@@ -39,12 +39,21 @@ GoRouter router(Ref ref) {
       ref.read(currentRouterPathProvider.notifier).updatePanelDetail(currentPath);
       var homeStyle = ref.read(homeStyleProvider);
       if (homeStyle == HomeStyleType.draw) return;
-      if (currentPath != AppRouter.home &&
-          currentPath != AppRouter.user &&
-          currentPath != AppRouter.setting) {
-        GetIt.I<WeSlideController>(instanceName: 'footer').hide();
-      } else {
-        GetIt.I<WeSlideController>(instanceName: 'footer').show();
+
+      // 安全地调用 WeSlideController，避免在 disposed 后调用
+      try {
+        final controller = GetIt.I<WeSlideController>(instanceName: 'footer');
+        if (currentPath != AppRouter.home &&
+            currentPath != AppRouter.user &&
+            currentPath != AppRouter.today &&
+            currentPath != AppRouter.setting) {
+          controller.hide();
+        } else {
+          controller.show();
+        }
+      } catch (e) {
+        // Controller 已被 dispose 或不存在，忽略错误
+        print('[Router] WeSlideController error: $e');
       }
     });
   });

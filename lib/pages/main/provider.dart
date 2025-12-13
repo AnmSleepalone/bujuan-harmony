@@ -17,15 +17,39 @@ part 'provider.g.dart';
 @riverpod
 class ThemeModeNotifier extends _$ThemeModeNotifier {
   @override
-  ThemeMode build() =>
-      (GetIt.I<Box>().get(AppConfig.isDarkTheme) ?? false) ? ThemeMode.dark : ThemeMode.light;
+  ThemeMode build() {
+    // 读取保存的主题模式，默认跟随系统
+    final themeString = GetIt.I<Box>().get(AppConfig.themeMode) as String?;
+    switch (themeString) {
+      case 'light':
+        return ThemeMode.light;
+      case 'dark':
+        return ThemeMode.dark;
+      case 'system':
+      default:
+        return ThemeMode.system;
+    }
+  }
 
   void setTheme(ThemeMode mode) {
     state = mode;
+    // 保存主题模式
+    final themeString = mode == ThemeMode.light
+        ? 'light'
+        : mode == ThemeMode.dark
+            ? 'dark'
+            : 'system';
+    GetIt.I<Box>().put(AppConfig.themeMode, themeString);
   }
 
   void toggleTheme() {
-    state = state == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+    // 切换顺序：浅色 -> 深色 -> 跟随系统 -> 浅色
+    final newMode = state == ThemeMode.light
+        ? ThemeMode.dark
+        : state == ThemeMode.dark
+            ? ThemeMode.system
+            : ThemeMode.light;
+    setTheme(newMode);
   }
 }
 

@@ -124,7 +124,7 @@ final mediaColorProvider = AutoDisposeFutureProvider<PaletteGenerator>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MediaColorRef = AutoDisposeFutureProviderRef<PaletteGenerator>;
-String _$themeModeNotifierHash() => r'62b046d560cfe8308ca9511ea341a12533a2c262';
+String _$themeModeNotifierHash() => r'ad700fa5d41aeec8fea1cfb81dd3df07abf3c3ef';
 
 /// See also [ThemeModeNotifier].
 @ProviderFor(ThemeModeNotifier)

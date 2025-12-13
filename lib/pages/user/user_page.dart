@@ -19,7 +19,7 @@ class UserPage extends ConsumerWidget {
     final album = ref.watch(newAlbumProvider);
     bool desktop = medium(context) || expanded(context);
     return Scaffold(
-      appBar: desktop ? null : mainAppBar(),
+      appBar: desktop ? null : mainAppBar(context),
       body: album.when(
         data: (playlist) =>
             desktop ? DesktopUser(playlist: playlist) : MobileUser(playlist: playlist),
@@ -37,6 +37,32 @@ class MobileUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 检查是否有用户信息
+    final hasUserInfo = playlist.userInfo.nickname?.isNotEmpty ?? false;
+    final playlistItems = playlist.likeList.playlist ?? [];
+
+    // 如果没有用户信息，显示未登录提示
+    if (!hasUserInfo) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.person_outline, size: 64.w, color: Colors.grey),
+            SizedBox(height: 16.w),
+            Text(
+              '请先登录',
+              style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+            ),
+            SizedBox(height: 16.w),
+            ElevatedButton(
+              onPressed: () => context.push(AppRouter.login),
+              child: Text('去登录'),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 15.w),
       child: CustomScrollView(
@@ -56,44 +82,62 @@ class MobileUser extends StatelessWidget {
                   ),
                   SizedBox(width: 10.w),
                   Text(
-                    "Music library (${playlist.likeList.playlist?.length})",
+                    "Music library (${playlistItems.length})",
                     style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
             ),
           ),
-          SliverGrid.builder(
-            itemCount: (playlist.likeList.playlist ?? []).length,
-            itemBuilder: (context, index) {
-              final song = (playlist.likeList.playlist ?? [])[index];
-              return GestureDetector(
+          // 如果播放列表为空，显示空状态提示
+          if (playlistItems.isEmpty)
+            SliverFillRemaining(
+              child: Center(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CachedImage(
-                      imageUrl: song.coverImgUrl?.toString() ?? '',
-                      width: 108.w,
-                      height: 108.w,
-                      borderRadius: 0.w,
-                      pHeight: 200,
-                      pWidth: 200,
-                    ),
+                    Icon(Icons.music_note_outlined, size: 64.w, color: Colors.grey),
+                    SizedBox(height: 16.w),
                     Text(
-                      song.name ?? '',
-                      style: TextStyle(fontSize: 14.sp, overflow: TextOverflow.ellipsis),
-                      maxLines: 1,
-                    )
+                      '暂无歌单',
+                      style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                    ),
                   ],
                 ),
-                onTap: () => context.push(AppRouter.playlist, extra: song.id),
-              );
-            },
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: .8,
-                crossAxisSpacing: 15.w,
-                mainAxisSpacing: 15.w),
-          ),
+              ),
+            )
+          else
+            SliverGrid.builder(
+              itemCount: playlistItems.length,
+              itemBuilder: (context, index) {
+                final song = playlistItems[index];
+                return GestureDetector(
+                  child: Column(
+                    children: [
+                      CachedImage(
+                        imageUrl: song.coverImgUrl?.toString() ?? '',
+                        width: 108.w,
+                        height: 108.w,
+                        borderRadius: 0.w,
+                        pHeight: 200,
+                        pWidth: 200,
+                      ),
+                      Text(
+                        song.name ?? '',
+                        style: TextStyle(fontSize: 14.sp, overflow: TextOverflow.ellipsis),
+                        maxLines: 1,
+                      )
+                    ],
+                  ),
+                  onTap: () => context.push(AppRouter.playlist, extra: song.id),
+                );
+              },
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: .8,
+                  crossAxisSpacing: 15.w,
+                  mainAxisSpacing: 15.w),
+            ),
           SliverToBoxAdapter(
             child: DynamicPadding(),
           )
@@ -110,6 +154,35 @@ class DesktopUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 检查是否有用户信息
+    final hasUserInfo = playlist.userInfo.nickname?.isNotEmpty ?? false;
+    final playlistItems = playlist.likeList.playlist ?? [];
+
+    // 如果没有用户信息，显示未登录提示
+    if (!hasUserInfo) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.person_outline, size: 80.w, color: Colors.grey),
+            SizedBox(height: 20.w),
+            Text(
+              '请先登录',
+              style: TextStyle(fontSize: 18.sp, color: Colors.grey),
+            ),
+            SizedBox(height: 20.w),
+            ElevatedButton(
+              onPressed: () => context.push(AppRouter.login),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.w),
+                child: Text('去登录'),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Row(
       children: [
         Padding(
@@ -139,25 +212,40 @@ class DesktopUser extends StatelessWidget {
           ),
         ),
         Expanded(
-            child: ListView.builder(
-          padding: EdgeInsets.only(bottom: 45.w),
-          itemCount: (playlist.likeList.playlist ?? []).length,
-          itemBuilder: (context, index) {
-            final song = (playlist.likeList.playlist ?? [])[index];
-            return ListTile(
-              contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 3.w),
-              leading: CachedImage(
-                imageUrl: song.coverImgUrl?.toString() ?? '',
-                width: 48.w,
-                height: 48.w,
-                borderRadius: 24.w,
-              ),
-              title: Text(song.name ?? ''),
-              subtitle: Text('${song.trackCount ?? 0} songs'),
-              onTap: () => context.push(AppRouter.playlist, extra: song.id),
-            );
-          },
-        ))
+          child: playlistItems.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.music_note_outlined, size: 80.w, color: Colors.grey),
+                      SizedBox(height: 20.w),
+                      Text(
+                        '暂无歌单',
+                        style: TextStyle(fontSize: 18.sp, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView.builder(
+                  padding: EdgeInsets.only(bottom: 45.w),
+                  itemCount: playlistItems.length,
+                  itemBuilder: (context, index) {
+                    final song = playlistItems[index];
+                    return ListTile(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 3.w),
+                      leading: CachedImage(
+                        imageUrl: song.coverImgUrl?.toString() ?? '',
+                        width: 48.w,
+                        height: 48.w,
+                        borderRadius: 24.w,
+                      ),
+                      title: Text(song.name ?? ''),
+                      subtitle: Text('${song.trackCount ?? 0} songs'),
+                      onTap: () => context.push(AppRouter.playlist, extra: song.id),
+                    );
+                  },
+                ),
+        )
       ],
     );
   }
