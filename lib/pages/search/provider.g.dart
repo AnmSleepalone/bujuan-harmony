@@ -178,7 +178,7 @@ class _SearchSuggestProviderElement
   String get keyword => (origin as SearchSuggestProvider).keyword;
 }
 
-String _$searchSongsHash() => r'aec350dce25b5a53fc2b4dc6b4ff2cdf4c8e4efb';
+String _$searchSongsHash() => r'46809c3bcfa60bdedda2f2de10d75a050beae420';
 
 /// See also [searchSongs].
 @ProviderFor(searchSongs)

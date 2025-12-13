@@ -160,5 +160,47 @@ class _GetImageColorProviderElement
   ImageProvider<Object> get imageProvider =>
       (origin as GetImageColorProvider).imageProvider;
 }
+
+String _$currentSongLyricsHash() => r'3c035b3829885697651cf13068de64db9c540f88';
+
+/// 当前播放歌曲的歌词
+///
+/// Copied from [currentSongLyrics].
+@ProviderFor(currentSongLyrics)
+final currentSongLyricsProvider =
+    AutoDisposeFutureProvider<SongLyricWrap?>.internal(
+  currentSongLyrics,
+  name: r'currentSongLyricsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$currentSongLyricsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CurrentSongLyricsRef = AutoDisposeFutureProviderRef<SongLyricWrap?>;
+String _$currentSongCommentsHash() =>
+    r'92478d6473ece29cbaf23c57b68576351c3713d2';
+
+/// 当前播放歌曲的评论
+///
+/// Copied from [currentSongComments].
+@ProviderFor(currentSongComments)
+final currentSongCommentsProvider =
+    AutoDisposeFutureProvider<CommentListWrap?>.internal(
+  currentSongComments,
+  name: r'currentSongCommentsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$currentSongCommentsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CurrentSongCommentsRef = AutoDisposeFutureProviderRef<CommentListWrap?>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

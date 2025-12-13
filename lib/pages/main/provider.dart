@@ -122,6 +122,11 @@ Stream<PlaybackState?> playbackState(Ref ref) {
   return BujuanMusicHandler().playbackState.stream;
 }
 
+@riverpod
+Stream<List<MediaItem>> queueStream(Ref ref) {
+  return BujuanMusicHandler().queue.stream.map((queue) => queue ?? []);
+}
+
 // _player.onPositionChanged
 
 @riverpod

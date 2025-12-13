@@ -58,6 +58,22 @@ final playbackStateProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef PlaybackStateRef = AutoDisposeStreamProviderRef<PlaybackState?>;
+String _$queueStreamHash() => r'f896839395c9460c6ff64c9490e72889f02e5ff9';
+
+/// See also [queueStream].
+@ProviderFor(queueStream)
+final queueStreamProvider = AutoDisposeStreamProvider<List<MediaItem>>.internal(
+  queueStream,
+  name: r'queueStreamProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$queueStreamHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef QueueStreamRef = AutoDisposeStreamProviderRef<List<MediaItem>>;
 String _$userInfoHash() => r'37ca86b3f6a2f92534a229e5bee178986fb8ae7f';
 
 /// See also [userInfo].

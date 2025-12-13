@@ -12,6 +12,8 @@ import '../../utils/color_utils.dart';
 import '../../widgets/wave.dart';
 import '../main/phone/widgets.dart';
 import '../main/provider.dart';
+import 'lyrics_sheet.dart';
+import 'comment_sheet.dart';
 
 class PlayPage extends StatelessWidget {
   const PlayPage({super.key});
@@ -139,47 +141,70 @@ class PlaybackControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
+    return Column(
       children: [
-        SizedBox(width: 20.w),
-        const ControlButton(
-          image: HugeIcons.strokeRoundedFavourite,
-          color: Colors.red,
+        // 第一行：播放控制按钮
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ControlButton(
+              image: HugeIcons.strokeRoundedPrevious,
+              onTap: () => BujuanMusicHandler().skipToPrevious(),
+            ),
+            SizedBox(width: 30.w),
+            _PlayPauseButton(),
+            SizedBox(width: 30.w),
+            ControlButton(
+              image: HugeIcons.strokeRoundedNext,
+              onTap: () => BujuanMusicHandler().skipToNext(),
+            ),
+          ],
         ),
-        SizedBox(width: 15.w),
-        Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ControlButton(
-                image: HugeIcons.strokeRoundedPrevious,
-                onTap: () => BujuanMusicHandler().skipToPrevious(),
-              ),
-              _PlayPauseButton(),
-              ControlButton(
-                image: HugeIcons.strokeRoundedNext,
-                onTap: () => BujuanMusicHandler().skipToNext(),
-              ),
-            ],
-          ),
+        SizedBox(height: 30.w),
+        // 第二行：功能按钮
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            SizedBox(width: 20.w),
+            // 播放列表
+            Consumer(builder: (context, ref, child) {
+              return ControlButton(
+                image: HugeIcons.strokeRoundedPlaylist01,
+                onTap: () => showPlaylistSheet(context),
+              );
+            }),
+            // 歌词
+            ControlButton(
+              image: HugeIcons.strokeRoundedMusicNote04,
+              onTap: () => showLyricsSheet(context),
+            ),
+            // 评论
+            ControlButton(
+              image: HugeIcons.strokeRoundedComment02,
+              onTap: () => showCommentSheet(context),
+            ),
+            // 循环模式
+            Consumer(builder: (context, ref, child) {
+              var loopMode = ref.watch(loopModeNotifierProvider);
+              return ControlButton(
+                image: loopMode == LoopMode.one
+                    ? HugeIcons.strokeRoundedRepeatOne02
+                    : loopMode == LoopMode.playlist
+                        ? HugeIcons.strokeRoundedRepeat
+                        : HugeIcons.strokeRoundedShuffle,
+                onTap: () {
+                  ref.read(loopModeNotifierProvider.notifier).changeMode();
+                },
+              );
+            }),
+            SizedBox(width: 20.w),
+          ],
         ),
-        SizedBox(width: 15.w),
-        Consumer(builder: (context, ref, child) {
-          var loopMode = ref.watch(loopModeNotifierProvider);
-          return ControlButton(
-            image: loopMode == LoopMode.one
-                ? HugeIcons.strokeRoundedRepeatOne02
-                : loopMode == LoopMode.playlist
-                    ? HugeIcons.strokeRoundedRepeat
-                    : HugeIcons.strokeRoundedShuffle,
-            onTap: () {
-              ref.read(loopModeNotifierProvider.notifier).changeMode();
-            },
-          );
-        }),
-        SizedBox(width: 20.w),
+        // 注释掉的红心按钮（保留代码以便将来恢复）
+        // const ControlButton(
+        //   image: HugeIcons.strokeRoundedFavourite,
+        //   color: Colors.red,
+        // ),
       ],
     );
   }
@@ -256,3 +281,137 @@ class AlbumWidget extends ConsumerWidget {
     );
   }
 }
+
+/// 播放列表Sheet
+void showPlaylistSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => DraggableScrollableSheet(
+      initialChildSize: 0.7,
+      minChildSize: 0.5,
+      maxChildSize: 0.9,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.w)),
+          ),
+          child: Column(
+            children: [
+              // 顶部指示条
+              Container(
+                margin: EdgeInsets.only(top: 8.w),
+                width: 40.w,
+                height: 4.w,
+                decoration: BoxDecoration(
+                  color: Colors.grey.withAlpha(100),
+                  borderRadius: BorderRadius.circular(2.w),
+                ),
+              ),
+              // Header
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
+                child: Consumer(builder: (context, ref, child) {
+                  final queue = ref.watch(queueStreamProvider).value ?? [];
+                  return Row(
+                    children: [
+                      Text('播放列表', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold)),
+                      Spacer(),
+                      Text('共${queue.length}首', style: TextStyle(fontSize: 14.sp, color: Colors.grey)),
+                    ],
+                  );
+                }),
+              ),
+              Divider(height: 1.w),
+              // List
+              Expanded(
+                child: Consumer(builder: (context, ref, child) {
+                  final queue = ref.watch(queueStreamProvider).value ?? [];
+                  final currentIndex = BujuanMusicHandler().currentIndex;
+
+                  if (queue.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(HugeIcons.strokeRoundedMusicNote04, size: 64.sp, color: Colors.grey),
+                          SizedBox(height: 16.w),
+                          Text('播放列表为空', style: TextStyle(fontSize: 16.sp, color: Colors.grey)),
+                          SizedBox(height: 8.w),
+                          Text('去首页添加歌曲吧', style: TextStyle(fontSize: 14.sp, color: Colors.grey)),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    controller: scrollController,
+                    itemCount: queue.length,
+                    itemBuilder: (context, index) {
+                      final item = queue[index];
+                      final isPlaying = index == currentIndex;
+                      return Dismissible(
+                        key: Key('${item.id}_$index'),
+                        direction: DismissDirection.endToStart,
+                        onDismissed: (_) {
+                          BujuanMusicHandler().removeFromQueue(index);
+                        },
+                        background: Container(
+                          alignment: Alignment.centerRight,
+                          padding: EdgeInsets.only(right: 20.w),
+                          color: Colors.red,
+                          child: Icon(Icons.delete, color: Colors.white),
+                        ),
+                        child: ListTile(
+                          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.w),
+                          leading: CachedImage(
+                            imageUrl: item.artUri?.toString() ?? '',
+                            width: 48.w,
+                            height: 48.w,
+                            borderRadius: 24.w,
+                            pWidth: 100,
+                            pHeight: 100,
+                          ),
+                          title: Text(
+                            item.title,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: isPlaying ? Color(0XFF1ED760) : null,
+                              fontWeight: isPlaying ? FontWeight.w600 : FontWeight.normal,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          subtitle: Text(
+                            item.artist ?? '',
+                            style: TextStyle(fontSize: 12.sp),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: isPlaying
+                              ? Icon(HugeIcons.strokeRoundedVolumeHigh, size: 20.sp, color: Color(0XFF1ED760))
+                              : IconButton(
+                                  icon: Icon(Icons.close, size: 20.sp),
+                                  onPressed: () {
+                                    BujuanMusicHandler().removeFromQueue(index);
+                                  },
+                                ),
+                          onTap: () {
+                            BujuanMusicHandler().skipToQueueItem(index);
+                          },
+                        ),
+                      );
+                    },
+                  );
+                }),
+              ),
+            ],
+          ),
+        );
+      },
+    ),
+  );
+}
+

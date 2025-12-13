@@ -66,6 +66,12 @@ class BujuanMusicHandler extends BaseAudioHandler with QueueHandler, SeekHandler
 
   Stream<Duration> get currentPosition => _player.onPositionChanged;
 
+  /// 获取当前播放列表（只读）
+  List<MediaItem> get playlist => List.unmodifiable(_playlist);
+
+  /// 获取当前播放索引
+  int get currentIndex => _currentIndex;
+
   /// 更新播放列表
   @override
   Future<void> updateQueue(List<MediaItem> queue, {int index = 0}) async {
@@ -88,6 +94,67 @@ class BujuanMusicHandler extends BaseAudioHandler with QueueHandler, SeekHandler
 
     // 更新播放列表后立即保存状态
     _stateService.savePlaybackState(immediate: true);
+  }
+
+  /// 添加歌曲到播放列表末尾
+  Future<void> addToQueue(MediaItem item) async {
+    _playlist.add(item);
+    queue.add(_playlist);
+
+    if (_loopMode == LoopMode.shuffle) {
+      _generateShuffledIndices();
+    }
+
+    _stateService.savePlaybackState(immediate: true);
+  }
+
+  /// 从播放列表中删除指定位置的歌曲
+  Future<void> removeFromQueue(int index) async {
+    if (index < 0 || index >= _playlist.length) return;
+
+    // 如果是最后一首且只剩一首，清空队列并停止
+    if (_playlist.length == 1) {
+      await stop();
+      _playlist.clear();
+      queue.add(_playlist);
+      _stateService.savePlaybackState(immediate: true);
+      return;
+    }
+
+    // 如果删除的是当前播放的歌曲
+    if (index == _currentIndex) {
+      // 先跳转到下一首
+      await skipToNext();
+      // 删除歌曲
+      _playlist.removeAt(index);
+      // 调整当前索引（因为删除了一首，如果当前索引在删除位置之后，需要减1）
+      if (_currentIndex > index) {
+        _currentIndex--;
+      }
+    } else {
+      // 删除非当前播放的歌曲
+      _playlist.removeAt(index);
+      // 如果删除的歌曲在当前播放歌曲之前，需要调整索引
+      if (_currentIndex > index) {
+        _currentIndex--;
+      }
+    }
+
+    queue.add(_playlist);
+
+    if (_loopMode == LoopMode.shuffle) {
+      _generateShuffledIndices();
+    }
+
+    _stateService.savePlaybackState(immediate: true);
+  }
+
+  /// 跳转到播放列表中的指定位置
+  @override
+  Future<void> skipToQueueItem(int index) async {
+    if (index < 0 || index >= _playlist.length) return;
+    _currentIndex = index;
+    await _playCurrent();
   }
 
   /// 生成打乱的播放顺序
