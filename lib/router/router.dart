@@ -1,3 +1,4 @@
+import 'package:bujuan_music/common/values/app_config.dart';
 import 'package:bujuan_music/pages/main/provider.dart';
 import 'package:bujuan_music/router/app_pages.dart';
 import 'package:bujuan_music/router/app_router.dart';
@@ -6,12 +7,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../pages/main/main_page.dart';
 import '../widgets/we_slider/weslide_controller.dart';
 
 part 'router.g.dart';
+
+/// 检查用户是否已登录
+bool _isLoggedIn() {
+  try {
+    final box = GetIt.I<Box>();
+    final userInfo = box.get(AppConfig.userInfoKey);
+    return userInfo != null && userInfo.toString().isNotEmpty;
+  } catch (e) {
+    return false;
+  }
+}
 
 @riverpod
 GoRouter router(Ref ref) {
@@ -21,7 +34,25 @@ GoRouter router(Ref ref) {
   final router = GoRouter(
     navigatorKey: routerKey,
     debugLogDiagnostics: true,
-    initialLocation: AppRouter.splash,
+    initialLocation: AppRouter.home,
+    // 路由守卫：未登录时重定向到登录页
+    redirect: (context, state) {
+      final isLoggedIn = _isLoggedIn();
+      final isLoginPage = state.matchedLocation == AppRouter.login;
+      final isSplashPage = state.matchedLocation == AppRouter.splash;
+
+      // 如果未登录且不在登录页/启动页，重定向到登录页
+      if (!isLoggedIn && !isLoginPage && !isSplashPage) {
+        return AppRouter.login;
+      }
+
+      // 如果已登录且在登录页，重定向到首页
+      if (isLoggedIn && isLoginPage) {
+        return AppRouter.home;
+      }
+
+      return null; // 不需要重定向
+    },
     routes: [
       ShellRoute(
         routes: AppPages.shellRouter,

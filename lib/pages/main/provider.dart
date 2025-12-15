@@ -112,19 +112,24 @@ class CurrentRouterPath extends _$CurrentRouterPath {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 Stream<MediaItem?> mediaItem(Ref ref) {
   return BujuanMusicHandler().mediaItem.stream;
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 Stream<PlaybackState?> playbackState(Ref ref) {
   return BujuanMusicHandler().playbackState.stream;
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 Stream<List<MediaItem>> queueStream(Ref ref) {
   return BujuanMusicHandler().queue.stream.map((queue) => queue ?? []);
+}
+
+@Riverpod(keepAlive: true)
+Stream<int> currentIndexStream(Ref ref) {
+  return BujuanMusicHandler().currentIndexSubject.stream;
 }
 
 // _player.onPositionChanged

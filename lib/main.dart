@@ -121,7 +121,7 @@ class MyApp extends ConsumerWidget {
       ), child: Consumer(builder: (_, ref, __) {
         final themeMode = ref.watch(themeModeNotifierProvider);
         return MaterialApp.router(
-          title: 'Bujuan',
+          title: '倦了',
           themeMode: themeMode,
           darkTheme: AppTheme.dark,
           showPerformanceOverlay: false,

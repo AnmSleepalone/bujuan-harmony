@@ -12,7 +12,7 @@ AppBar mainAppBar(BuildContext context) {
     leading: IconButton(
         onPressed: () => GetIt.I<ZoomDrawerController>().toggle?.call(),
         icon: Image.asset('assets/images/logo.png',width: 35.w,height: 35.w,)),
-    title: Text('BuJuan'),
+    title: Text('倦了'),
     actions: [
       IconButton(
           onPressed: () {

@@ -24,11 +24,11 @@ final weSlideControllerProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef WeSlideControllerRef = AutoDisposeProviderRef<WeSlideController>;
-String _$mediaItemHash() => r'30408799ae381fd95c17187749573c341a79b898';
+String _$mediaItemHash() => r'c955eda17d145c44c1963bd2fca905983abd8b72';
 
 /// See also [mediaItem].
 @ProviderFor(mediaItem)
-final mediaItemProvider = AutoDisposeStreamProvider<MediaItem?>.internal(
+final mediaItemProvider = StreamProvider<MediaItem?>.internal(
   mediaItem,
   name: r'mediaItemProvider',
   debugGetCreateSourceHash:
@@ -39,13 +39,12 @@ final mediaItemProvider = AutoDisposeStreamProvider<MediaItem?>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef MediaItemRef = AutoDisposeStreamProviderRef<MediaItem?>;
-String _$playbackStateHash() => r'30032030f30a04107d5cdaee69a1d8cb4c4384ef';
+typedef MediaItemRef = StreamProviderRef<MediaItem?>;
+String _$playbackStateHash() => r'377f19925c19bdc4792008dea1e7471e1fe3ee27';
 
 /// See also [playbackState].
 @ProviderFor(playbackState)
-final playbackStateProvider =
-    AutoDisposeStreamProvider<PlaybackState?>.internal(
+final playbackStateProvider = StreamProvider<PlaybackState?>.internal(
   playbackState,
   name: r'playbackStateProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -57,12 +56,12 @@ final playbackStateProvider =
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef PlaybackStateRef = AutoDisposeStreamProviderRef<PlaybackState?>;
-String _$queueStreamHash() => r'f896839395c9460c6ff64c9490e72889f02e5ff9';
+typedef PlaybackStateRef = StreamProviderRef<PlaybackState?>;
+String _$queueStreamHash() => r'eddd01f7d426e427398c73a0fa9e9ffbd3e91235';
 
 /// See also [queueStream].
 @ProviderFor(queueStream)
-final queueStreamProvider = AutoDisposeStreamProvider<List<MediaItem>>.internal(
+final queueStreamProvider = StreamProvider<List<MediaItem>>.internal(
   queueStream,
   name: r'queueStreamProvider',
   debugGetCreateSourceHash:
@@ -73,7 +72,25 @@ final queueStreamProvider = AutoDisposeStreamProvider<List<MediaItem>>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef QueueStreamRef = AutoDisposeStreamProviderRef<List<MediaItem>>;
+typedef QueueStreamRef = StreamProviderRef<List<MediaItem>>;
+String _$currentIndexStreamHash() =>
+    r'27e49901a9782e05ba29a387ef292a30d8bb561a';
+
+/// See also [currentIndexStream].
+@ProviderFor(currentIndexStream)
+final currentIndexStreamProvider = StreamProvider<int>.internal(
+  currentIndexStream,
+  name: r'currentIndexStreamProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$currentIndexStreamHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CurrentIndexStreamRef = StreamProviderRef<int>;
 String _$userInfoHash() => r'37ca86b3f6a2f92534a229e5bee178986fb8ae7f';
 
 /// See also [userInfo].

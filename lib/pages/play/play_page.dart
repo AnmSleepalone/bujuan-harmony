@@ -5,11 +5,13 @@ import 'package:bujuan_music/widgets/cache_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:shadex/shadex.dart';
 import '../../utils/color_utils.dart';
 import '../../widgets/wave.dart';
+import '../../widgets/we_slider/weslide_controller.dart';
 import '../main/phone/widgets.dart';
 import '../main/provider.dart';
 import 'lyrics_sheet.dart';
@@ -18,13 +20,25 @@ import 'comment_sheet.dart';
 class PlayPage extends StatelessWidget {
   const PlayPage({super.key});
 
+  void _closePanel() {
+    GetIt.I<WeSlideController>(instanceName: 'panel').hide();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        PanelBackground(),
-        MusicControlsSection()
-      ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          _closePanel();
+        }
+      },
+      child: Stack(
+        children: [
+          PanelBackground(),
+          MusicControlsSection(),
+        ],
+      ),
     );
   }
 }
@@ -77,9 +91,9 @@ class MusicControlsSection extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 30.w),
                   child: MusicProgressBar(),
                 ),
-                SizedBox(height: 60.w),
-                const PlaybackControls(),
                 SizedBox(height: 40.w),
+                const PlaybackControls(),
+                SizedBox(height: 80.w),
               ],
             ),
           ),
@@ -327,85 +341,7 @@ void showPlaylistSheet(BuildContext context) {
               Divider(height: 1.w),
               // List
               Expanded(
-                child: Consumer(builder: (context, ref, child) {
-                  final queue = ref.watch(queueStreamProvider).value ?? [];
-                  final currentIndex = BujuanMusicHandler().currentIndex;
-
-                  if (queue.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(HugeIcons.strokeRoundedMusicNote04, size: 64.sp, color: Colors.grey),
-                          SizedBox(height: 16.w),
-                          Text('播放列表为空', style: TextStyle(fontSize: 16.sp, color: Colors.grey)),
-                          SizedBox(height: 8.w),
-                          Text('去首页添加歌曲吧', style: TextStyle(fontSize: 14.sp, color: Colors.grey)),
-                        ],
-                      ),
-                    );
-                  }
-
-                  return ListView.builder(
-                    controller: scrollController,
-                    itemCount: queue.length,
-                    itemBuilder: (context, index) {
-                      final item = queue[index];
-                      final isPlaying = index == currentIndex;
-                      return Dismissible(
-                        key: Key('${item.id}_$index'),
-                        direction: DismissDirection.endToStart,
-                        onDismissed: (_) {
-                          BujuanMusicHandler().removeFromQueue(index);
-                        },
-                        background: Container(
-                          alignment: Alignment.centerRight,
-                          padding: EdgeInsets.only(right: 20.w),
-                          color: Colors.red,
-                          child: Icon(Icons.delete, color: Colors.white),
-                        ),
-                        child: ListTile(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.w),
-                          leading: CachedImage(
-                            imageUrl: item.artUri?.toString() ?? '',
-                            width: 48.w,
-                            height: 48.w,
-                            borderRadius: 24.w,
-                            pWidth: 100,
-                            pHeight: 100,
-                          ),
-                          title: Text(
-                            item.title,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: isPlaying ? Color(0XFF1ED760) : null,
-                              fontWeight: isPlaying ? FontWeight.w600 : FontWeight.normal,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          subtitle: Text(
-                            item.artist ?? '',
-                            style: TextStyle(fontSize: 12.sp),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          trailing: isPlaying
-                              ? Icon(HugeIcons.strokeRoundedVolumeHigh, size: 20.sp, color: Color(0XFF1ED760))
-                              : IconButton(
-                                  icon: Icon(Icons.close, size: 20.sp),
-                                  onPressed: () {
-                                    BujuanMusicHandler().removeFromQueue(index);
-                                  },
-                                ),
-                          onTap: () {
-                            BujuanMusicHandler().skipToQueueItem(index);
-                          },
-                        ),
-                      );
-                    },
-                  );
-                }),
+                child: _PlaylistListView(scrollController: scrollController),
               ),
             ],
           ),
@@ -413,5 +349,136 @@ void showPlaylistSheet(BuildContext context) {
       },
     ),
   );
+}
+
+/// 播放列表 ListView 组件
+class _PlaylistListView extends ConsumerStatefulWidget {
+  final ScrollController scrollController;
+
+  const _PlaylistListView({required this.scrollController});
+
+  @override
+  ConsumerState<_PlaylistListView> createState() => _PlaylistListViewState();
+}
+
+class _PlaylistListViewState extends ConsumerState<_PlaylistListView> {
+  bool _hasScrolledToCurrentIndex = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // 在下一帧滚动到当前播放位置
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToCurrentIndex();
+    });
+  }
+
+  void _scrollToCurrentIndex() {
+    if (_hasScrolledToCurrentIndex) return;
+
+    final currentIndex = ref.read(currentIndexStreamProvider).value ?? 0;
+    final queue = ref.read(queueStreamProvider).value ?? [];
+
+    if (queue.isNotEmpty && currentIndex >= 0 && currentIndex < queue.length) {
+      // 估算每个 ListTile 的高度（约 72.w）
+      final itemHeight = 72.w;
+      final targetOffset = currentIndex * itemHeight;
+
+      // 延迟一点确保 ListView 已经构建完成
+      Future.delayed(Duration(milliseconds: 100), () {
+        if (widget.scrollController.hasClients) {
+          final maxScroll = widget.scrollController.position.maxScrollExtent;
+          final scrollTo = targetOffset.clamp(0.0, maxScroll);
+          widget.scrollController.animateTo(
+            scrollTo,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+          _hasScrolledToCurrentIndex = true;
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final queue = ref.watch(queueStreamProvider).value ?? [];
+    final currentIndex = ref.watch(currentIndexStreamProvider).value ?? -1;
+
+    if (queue.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(HugeIcons.strokeRoundedMusicNote04, size: 64.sp, color: Colors.grey),
+            SizedBox(height: 16.w),
+            Text('播放列表为空', style: TextStyle(fontSize: 16.sp, color: Colors.grey)),
+            SizedBox(height: 8.w),
+            Text('去首页添加歌曲吧', style: TextStyle(fontSize: 14.sp, color: Colors.grey)),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      controller: widget.scrollController,
+      itemCount: queue.length,
+      itemBuilder: (context, index) {
+        final item = queue[index];
+        final isPlaying = index == currentIndex;
+        return Dismissible(
+          key: Key('${item.id}_$index'),
+          direction: DismissDirection.endToStart,
+          onDismissed: (_) {
+            BujuanMusicHandler().removeFromQueue(index);
+          },
+          background: Container(
+            alignment: Alignment.centerRight,
+            padding: EdgeInsets.only(right: 20.w),
+            color: Colors.red,
+            child: Icon(Icons.delete, color: Colors.white),
+          ),
+          child: ListTile(
+            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.w),
+            leading: CachedImage(
+              imageUrl: item.artUri?.toString() ?? '',
+              width: 48.w,
+              height: 48.w,
+              borderRadius: 24.w,
+              pWidth: 100,
+              pHeight: 100,
+            ),
+            title: Text(
+              item.title,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: isPlaying ? Color(0XFF1ED760) : null,
+                fontWeight: isPlaying ? FontWeight.w600 : FontWeight.normal,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: Text(
+              item.artist ?? '',
+              style: TextStyle(fontSize: 12.sp),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: isPlaying
+                ? Icon(HugeIcons.strokeRoundedVolumeHigh, size: 20.sp, color: Color(0XFF1ED760))
+                : IconButton(
+                    icon: Icon(Icons.close, size: 20.sp),
+                    onPressed: () {
+                      BujuanMusicHandler().removeFromQueue(index);
+                    },
+                  ),
+            onTap: () {
+              BujuanMusicHandler().skipToQueueItem(index);
+            },
+          ),
+        );
+      },
+    );
+  }
 }
 

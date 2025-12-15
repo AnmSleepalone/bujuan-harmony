@@ -4,6 +4,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bujuan_music_api/bujuan_music_api.dart';
 import 'package:flutter/widgets.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../services/playback_state_service.dart';
 
@@ -59,6 +60,9 @@ class BujuanMusicHandler extends BaseAudioHandler with QueueHandler, SeekHandler
   final PlaybackStateService _stateService = PlaybackStateService();
 
   int _currentIndex = 0;
+
+  /// 当前播放索引的响应式 Stream
+  final BehaviorSubject<int> currentIndexSubject = BehaviorSubject<int>.seeded(0);
   int _shufflePosition = 0;
   LoopMode _loopMode = LoopMode.playlist;
 
@@ -190,6 +194,9 @@ class BujuanMusicHandler extends BaseAudioHandler with QueueHandler, SeekHandler
   Future<void> _playCurrent() async {
     final item = _playlist[_currentIndex];
     mediaItem.add(item);
+
+    // 更新当前索引的响应式 Stream
+    currentIndexSubject.add(_currentIndex);
 
     // 立即更新 playbackState 为 loading 状态，让系统卡片尽快显示
     playbackState.add(playbackState.value.copyWith(
@@ -358,6 +365,8 @@ class BujuanMusicHandler extends BaseAudioHandler with QueueHandler, SeekHandler
       } else {
         _currentIndex = 0;
       }
+      // 更新当前索引的响应式 Stream
+      currentIndexSubject.add(_currentIndex);
 
       // 恢复播放模式
       final loopModeStr = stateData['loopMode'] as String?;

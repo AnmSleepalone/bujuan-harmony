@@ -11,9 +11,9 @@ class AppConfig {
   static const String playbackState = 'playback_state'; // 播放状态持久化
 
   static final List<BottomData> bottomItems = [
-    BottomData(HugeIcons.strokeRoundedHome01, HugeIcons.strokeRoundedHome01, AppRouter.home, 'Home'),
-    BottomData(HugeIcons.strokeRoundedLookTop, HugeIcons.strokeRoundedLookTop, AppRouter.user, 'Me'),
-    BottomData(HugeIcons.strokeRoundedSettings02, HugeIcons.strokeRoundedSettings02, AppRouter.setting, 'Setting'),
+    BottomData(HugeIcons.strokeRoundedHome01, HugeIcons.strokeRoundedHome01, AppRouter.home, '首页'),
+    BottomData(HugeIcons.strokeRoundedLookTop, HugeIcons.strokeRoundedLookTop, AppRouter.user, '我的'),
+    BottomData(HugeIcons.strokeRoundedSettings02, HugeIcons.strokeRoundedSettings02, AppRouter.setting, '设置'),
   ];
 
   static HomeStyleType homeStyleType = HomeStyleType.bottomBar;

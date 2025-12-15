@@ -315,6 +315,10 @@ class WeSlideState extends State<WeSlide> with TickerProviderStateMixin {
   /// Dispose
   @override
   void dispose() {
+    /// 移除 listener，避免在 dispose 后被调用
+    _effectiveController.removeListener(_animatedPanel);
+    _effectiveFooterController.removeListener(_animatedFooter);
+
     ///Animation Controller
     _ac.dispose();
     _acFooter.dispose();

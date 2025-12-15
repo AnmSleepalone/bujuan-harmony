@@ -1,10 +1,13 @@
+import 'package:bujuan_music/common/values/app_config.dart';
 import 'package:bujuan_music/pages/main/provider.dart';
 import 'package:bujuan_music/router/app_router.dart';
 import 'package:bujuan_music_api/bujuan_music_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 
@@ -177,6 +180,8 @@ class DesktopSetting extends ConsumerWidget {
                   if (confirmed == true) {
                     // 执行退出登录
                     await BujuanMusicManager().usc.onLogout();
+                    // 清除 Hive 中的用户信息
+                    GetIt.I<Box>().delete(AppConfig.userInfoKey);
                     if (context.mounted) {
                       context.replace(AppRouter.login);
                     }
@@ -204,18 +209,18 @@ class DesktopSetting extends ConsumerWidget {
             ListTile(
               leading: Icon(HugeIcons.strokeRoundedInformationCircle, size: 24.sp),
               title: Text('版本信息'),
-              subtitle: Text('Bujuan Music v1.0.0'),
+              subtitle: Text('倦了 v1.0.0'),
               trailing: Icon(Icons.chevron_right),
               onTap: () {
                 // 可以跳转到关于页面或显示对话框
                 showAboutDialog(
                   context: context,
-                  applicationName: 'Bujuan Music',
+                  applicationName: '倦了',
                   applicationVersion: '1.0.0',
-                  applicationLegalese: '© 2024 Bujuan Music',
+                  applicationLegalese: '😀 2025 倦了',
                   children: [
                     SizedBox(height: 16.w),
-                    Text('一款简洁优雅的音乐播放应用'),
+                    Text('基于开源项目bujuan_music,一款简洁优雅的音乐播放应用'),
                   ],
                 );
               },

@@ -150,7 +150,7 @@ class DesktopView extends StatelessWidget {
                     ),
                     SizedBox(width: 20.w),
                     Text(
-                      media?.title ?? 'Bujuan',
+                      media?.title ?? '倦了',
                       style: TextStyle(fontSize: 14.sp),
                     ),
                     SizedBox(width: 15.w),

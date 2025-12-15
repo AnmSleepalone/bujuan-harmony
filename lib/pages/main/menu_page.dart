@@ -38,7 +38,7 @@ class MobileMenu extends ConsumerWidget {
             color: currentPath == AppRouter.home ? Colors.red : null,
           ),
           title: Text(
-            'Home',
+            '首页',
             style: TextStyle(
                 color: currentPath == AppRouter.home ? Colors.red : null, fontSize: 16.sp),
           ),
@@ -52,7 +52,7 @@ class MobileMenu extends ConsumerWidget {
           leading: Icon(HugeIcons.strokeRoundedLookTop,
               color: currentPath == AppRouter.user ? Colors.red : null),
           title: Text(
-            'User',
+            '我的',
             style: TextStyle(
                 color: currentPath == AppRouter.user ? Colors.red : null, fontSize: 16.sp),
           ),
@@ -68,7 +68,7 @@ class MobileMenu extends ConsumerWidget {
           ),
           minLeadingWidth: 20.w,
           title: Text(
-            'Setting',
+            '设置',
             style: TextStyle(
                 color: currentPath == AppRouter.setting ? Colors.red : null, fontSize: 16.sp),
           ),
@@ -84,7 +84,7 @@ class MobileMenu extends ConsumerWidget {
                 ? HugeIcons.strokeRoundedSunCloud02
                 : HugeIcons.strokeRoundedMoon01,
           ),
-          title: Text('Theme Mode'),
+          title: Text('主题'),
           onTap: () => ref.read(themeModeNotifierProvider.notifier).toggleTheme(),
         )
       ],

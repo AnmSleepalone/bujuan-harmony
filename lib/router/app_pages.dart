@@ -1,4 +1,6 @@
 import 'package:bujuan_music/pages/artist/artist_page.dart';
+import 'package:bujuan_music/pages/cloud/cloud_page.dart';
+import 'package:bujuan_music/pages/fm/fm_page.dart';
 import 'package:bujuan_music/pages/home/today/today_page.dart';
 import 'package:bujuan_music/pages/mv/mv_page.dart';
 import 'package:bujuan_music/pages/play/desktop_play_page.dart';
@@ -54,6 +56,14 @@ class AppPages {
     GoRoute(
       path: AppRouter.search,
       builder: (context, state) => SearchPage(),
+    ),
+    GoRoute(
+      path: AppRouter.cloud,
+      builder: (context, state) => CloudPage(),
+    ),
+    GoRoute(
+      path: AppRouter.fm,
+      builder: (context, state) => FmPage(),
     ),
   ];
 

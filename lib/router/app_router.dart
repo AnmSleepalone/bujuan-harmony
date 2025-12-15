@@ -10,4 +10,6 @@ class AppRouter{
   static const String setting = '/setting';
   static const String mv = '/mv';
   static const String play = '/play';
+  static const String cloud = '/cloud';
+  static const String fm = '/fm';
 }

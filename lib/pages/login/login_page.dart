@@ -1,11 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:bujuan_music/common/values/app_config.dart';
 import 'package:bujuan_music/common/values/app_images.dart';
 import 'package:bujuan_music/router/app_router.dart';
 import 'package:bujuan_music_api/bujuan_music_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:pinput/pinput.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -42,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
             Image.asset(AppImages.logo, width: 120.w, height: 120.w),
             SizedBox(height: 20.w),
             Text(
-              'Bujuan Music',
+              '倦了',
               style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 60.w),
@@ -56,45 +60,56 @@ class _LoginPageState extends State<LoginPage> {
                 cursorColor: Color(0XFF1ED760),
                 style: TextStyle(fontSize: 18.sp),
                 decoration: InputDecoration(
-                    hintText: 'Please input phone number',
+                    hintText: '手机号登录暂不可用',
                     hintStyle: TextStyle(fontSize: 18.sp),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.w)),
               ),
             ),
             SizedBox(height: 30.w),
+            // SMS 登录暂时禁用
+            // ElevatedButton(
+            //   onPressed: () => showCodeBottomSheet(),
+            //   style: ElevatedButton.styleFrom(
+            //     backgroundColor: Color(0XFF1ED760),
+            //     foregroundColor: Colors.white,
+            //     elevation: 0,
+            //     padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 13.w),
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(30.w), // 圆角
+            //     ),
+            //     textStyle: const TextStyle(
+            //       fontSize: 18,
+            //       fontWeight: FontWeight.bold,
+            //     ),
+            //   ),
+            //   child: Text('Get SMS verification code'),
+            // ),
+            // SizedBox(height: 60.w),
             ElevatedButton(
-              onPressed: () => showCodeBottomSheet(),
+              onPressed: () => showQrCodeBottomSheet(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0XFF1ED760),
                 foregroundColor: Colors.white,
                 elevation: 0,
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 13.w),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.w), // 圆角
+                  borderRadius: BorderRadius.circular(30.w),
                 ),
                 textStyle: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              child: Text('Get SMS verification code'),
-            ),
-            SizedBox(height: 60.w),
-            GestureDetector(
-              onTap: () => showQrCodeBottomSheet(),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(HugeIcons.strokeRoundedQrCode),
                   SizedBox(width: 10.w),
-                  Text(
-                    'QR code login',
-                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
-                  ),
+                  Text('二维码登录'),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -216,9 +231,19 @@ class _LoginPageState extends State<LoginPage> {
 
       if (verifyEntity != null && verifyEntity.code == 200) {
         phoneController.text = '';
+
+        // 保存用户信息
+        bool saved = await _saveUserInfoAfterLogin();
+
         if (mounted) {
-          print('Verification success, navigating to home');
-          context.replace(AppRouter.home);
+          if (saved) {
+            print('Verification success, navigating to home');
+            context.replace(AppRouter.home);
+          } else {
+            // 保存失败但验证成功,仍然跳转(重启后可恢复)
+            print('User info save failed, but proceeding to home');
+            context.replace(AppRouter.home);
+          }
         }
       } else {
         final errorCode = verifyEntity?.code;
@@ -445,10 +470,34 @@ class _LoginPageState extends State<LoginPage> {
               print('QR code login success');
               timer.cancel();
               _qrCheckTimer = null;
+
+              // 保存用户信息
+              bool saved = await _saveUserInfoAfterLogin();
+
               if (mounted) {
                 Navigator.pop(context); // 关闭底部弹窗
-                print('Navigating to home after QR login success');
-                context.replace(AppRouter.home);
+                if (saved) {
+                  print('Navigating to home after QR login success');
+                  context.replace(AppRouter.home);
+                } else {
+                  // 保存失败,提示用户
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('提示'),
+                      content: Text('登录成功,但获取用户信息失败,请重启应用'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            context.replace(AppRouter.home);
+                          },
+                          child: Text('确定'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
               }
               break;
 
@@ -469,6 +518,32 @@ class _LoginPageState extends State<LoginPage> {
         // 不中断轮询,继续检查
       }
     });
+  }
+
+  /// 登录成功后保存用户信息
+  /// 返回值表示是否成功保存
+  Future<bool> _saveUserInfoAfterLogin() async {
+    try {
+      print('Fetching user info after login...');
+      var userInfo = await BujuanMusicManager().loginAccountInfo();
+
+      if (userInfo != null && userInfo.account != null) {
+        // 保存到Hive
+        GetIt.I<Box>().put(
+          AppConfig.userInfoKey,
+          jsonEncode(userInfo.profile?.toJson()),
+        );
+        print('User info saved successfully');
+        return true;
+      } else {
+        print('Failed to get user info: invalid response');
+        return false;
+      }
+    } catch (e, stackTrace) {
+      print('Error saving user info: $e');
+      print('Stack trace: $stackTrace');
+      return false;
+    }
   }
 
   @override

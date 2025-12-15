@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../router/app_router.dart';
 import '../../utils/adaptive_screen_utils.dart';
@@ -70,21 +71,47 @@ class MobileUser extends StatelessWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 20.w),
-              child: Row(
+              child: Column(
                 children: [
                   CachedImage(
                     imageUrl: playlist.userInfo.avatarUrl ?? "",
-                    width: 40.w,
-                    height: 40.w,
-                    pHeight: 100,
-                    pWidth: 100,
-                    borderRadius: 20.w,
+                    width: 60.w,
+                    height: 60.w,
+                    pHeight: 150,
+                    pWidth: 150,
+                    borderRadius: 30.w,
                   ),
-                  SizedBox(width: 10.w),
+                  SizedBox(height: 10.w),
                   Text(
-                    "Music library (${playlistItems.length})",
+                    playlist.userInfo.nickname ?? "未知用户",
                     style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-                  )
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // 快捷入口按钮
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 20.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _QuickEntryButton(
+                    icon: HugeIcons.strokeRoundedCalendar03,
+                    label: '每日推荐',
+                    onTap: () => context.push(AppRouter.today),
+                  ),
+                  _QuickEntryButton(
+                    icon: HugeIcons.strokeRoundedCloud,
+                    label: '云盘',
+                    onTap: () => context.push(AppRouter.cloud),
+                  ),
+                  _QuickEntryButton(
+                    icon: HugeIcons.strokeRoundedRadio01,
+                    label: '私人FM',
+                    onTap: () => context.push(AppRouter.fm),
+                  ),
                 ],
               ),
             ),
@@ -247,6 +274,45 @@ class DesktopUser extends StatelessWidget {
                 ),
         )
       ],
+    );
+  }
+}
+
+/// 快捷入口按钮组件
+class _QuickEntryButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _QuickEntryButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 100.w,
+        padding: EdgeInsets.symmetric(vertical: 12.w),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(12.w),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 28.w),
+            SizedBox(height: 6.w),
+            Text(
+              label,
+              style: TextStyle(fontSize: 12.sp),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
