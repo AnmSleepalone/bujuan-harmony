@@ -1,11 +1,11 @@
 <p align="center">
-<img src="macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_256.png" alt="app_icon" width="120"/>
+<img src="assets/images/logo.png" alt="app_icon" width="120"/>
 </p>
 
-<h1 align="center">Bujuan for HarmonyOS</h1>
+<h1 align="center">倦了（Bujuan for HarmonyOS）</h1>
 
 <p align="center">
-  <strong>一个专为鸿蒙系统适配的第三方网易云音乐播放器</strong>
+  <strong>一个鸿蒙系统适配的第三方网易云音乐播放器</strong>
 </p>
 
 <p align="center">
@@ -35,13 +35,13 @@
 ## 截图预览
 
 <!-- 请在此处添加截图 -->
-| 首页 | 播放页 | 歌词页 |
-|:---:|:---:|:---:|
-| ![首页](screenshots/home.png) | ![播放页](screenshots/play.png) | ![歌词页](screenshots/lyrics.png) |
+|              首页               |              播放页               |               歌词页                |
+|:-----------------------------:|:------------------------------:|:--------------------------------:|
+| ![首页](./screenshots/home.png) | ![播放页](./screenshots/play.png) | ![歌词页](./screenshots/lyrics.png) |
 
-| 我的 | 每日推荐 | 登录页 |
-|:---:|:---:|:---:|
-| ![我的](screenshots/me.png) | ![每日推荐](screenshots/today.png) | ![登录页](screenshots/login.png) |
+|             我的              |               每日推荐               |               登录页               |
+|:---------------------------:|:--------------------------------:|:-------------------------------:|
+| ![我的](./screenshots/me.png) | ![每日推荐](./screenshots/today.png) | ![登录页](./screenshots/login.png) |
 
 ---
 
@@ -50,13 +50,10 @@
 ### 基础功能
 - 网易云账号登录（二维码登录）
 - 每日推荐歌曲
-- 私人 FM（未实现）
-- 云盘音乐（未实现）
 - 歌单管理
 - 歌手/专辑浏览
 - 搜索功能
 - 鸿蒙系统媒体卡片控制
--
 
 
 ---
@@ -71,10 +68,12 @@
 - [x] 歌词翻译显示
 - [x] 评论页面
 - [x] 快捷入口（每日推荐、云盘、私人FM）
+- [x] 播放列表
+- [x] 搜索功能
 
 ### 问题修复
 - [x] 修复 API 调用错误
-- 
+
 ### UI 优化
 - [x] 播放页面布局优化
 - [x] 歌词页面视觉效果优化
