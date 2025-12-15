@@ -37,11 +37,11 @@
 <!-- 请在此处添加截图 -->
 |              首页               |              播放页               |               歌词页                |
 |:-----------------------------:|:------------------------------:|:--------------------------------:|
-| ![首页](./screenshots/home.png) | ![播放页](./screenshots/play.png) | ![歌词页](./screenshots/lyrics.png) |
+| ![首页](https://github.com/AnmSleepalone/bujuan-harmony/blob/feature/new-ui/screenshots/home.jpg) | ![播放页](https://github.com/AnmSleepalone/bujuan-harmony/blob/feature/new-ui/screenshots/play.jpg) | ![歌词页](https://github.com/AnmSleepalone/bujuan-harmony/blob/feature/new-ui/screenshots/lyrics.jpg) |
 
-|             我的              |               每日推荐               |               登录页               |
+|             我的              |               每日推荐               |               ...               |
 |:---------------------------:|:--------------------------------:|:-------------------------------:|
-| ![我的](./screenshots/me.png) | ![每日推荐](./screenshots/today.png) | ![登录页](./screenshots/login.png) |
+| ![我的](https://github.com/AnmSleepalone/bujuan-harmony/blob/feature/new-ui/screenshots/me.jpg) | ![每日推荐](https://github.com/AnmSleepalone/bujuan-harmony/blob/feature/new-ui/screenshots/today.jpg) | ![...]() |
 
 ---
 
@@ -70,6 +70,8 @@
 - [x] 快捷入口（每日推荐、云盘、私人FM）
 - [x] 播放列表
 - [x] 搜索功能
+- [ ] 云盘
+- [ ] 私人FM
 
 ### 问题修复
 - [x] 修复 API 调用错误
